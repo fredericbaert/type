@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>render test</title>
+<style>html,body{margin:0;height:100%;background:#888}canvas{display:block;height:100vh;margin:0 auto}</style></head>
+<body><canvas id="c"></canvas>
+<script src="../src/glyphs.js"></script><script src="../src/geom.js"></script><script src="../src/engine.js"></script>
+<script>
+  // Usage: test.html#{"text":"O","weight":245}
+  function draw() {
+    let o = {};
+    try { o = JSON.parse(decodeURIComponent(location.hash.slice(1)) || '{}'); } catch (e) {}
+    const S = Coil.normalizeSettings(o);
+    const { W, H } = Coil.docSize(S);
+    const c = document.getElementById('c');
+    const h = window.innerHeight * (window.devicePixelRatio || 1);
+    c.height = Math.round(h); c.width = Math.round(h * W / H);
+    Coil.renderScene(c, Coil.buildScene(S, W, H), S, { sprites: !!o._sprites });
+  }
+  window.addEventListener('hashchange', draw); draw();
+</script></body></html>

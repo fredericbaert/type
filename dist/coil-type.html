@@ -1,0 +1,3411 @@
+<title>Coil Type</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one-screen studio. Artboard on a warm grey stage, a quiet control rail on the right; stacks below 860px. */
+:root {
+  --paper: #dcd8d3;      /* ground, sampled from the reference print */
+  --surface: #e9e6e2;    /* control rail */
+  --well: #d2cdc7;       /* stage behind the artboard */
+  --ink: #16143c;        /* navy from the circle outlines */
+  --ink-2: #57536f;
+  --line: #c4beb7;
+  --accent: #f0368f;     /* hot pink rim */
+  --accent-ink: #ffffff;
+  --focus: #3d8df5;
+  --check-a: #cfcac4;
+  --check-b: #e4e0dc;
+  --shadow: 0 1px 0 rgba(22, 20, 60, 0.06), 0 18px 40px -18px rgba(22, 20, 60, 0.35);
+  --font-ui: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Martian Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --rail: 352px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12112a; --surface: #191838; --well: #0d0c21; --ink: #ece8e3; --ink-2: #a7a3c2;
+    --line: #2e2c52; --accent: #ff5aae; --accent-ink: #12112a; --focus: #6aa8ff;
+    --check-a: #1d1c3b; --check-b: #262549;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 18px 40px -18px rgba(0, 0, 0, 0.8);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12112a; --surface: #191838; --well: #0d0c21; --ink: #ece8e3; --ink-2: #a7a3c2;
+  --line: #2e2c52; --accent: #ff5aae; --accent-ink: #12112a; --focus: #6aa8ff;
+  --check-a: #1d1c3b; --check-b: #262549;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 18px 40px -18px rgba(0, 0, 0, 0.8);
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 14px/1.45 var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+.mono { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em; }
+.small { font-size: 10.5px; }
+
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr; min-height: 0; }
+
+/* ---------- top bar ---------- */
+.bar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 10px 16px; border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mark { width: 80px; height: 28px; display: block; }
+.brand-name { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; font-variation-settings: 'opsz' 96; }
+.tabs { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; }
+.tab {
+  border: 0; background: transparent; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+  font-weight: 600; font-size: 13px; color: var(--ink-2);
+}
+.tab[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.bar-actions { margin-left: auto; display: flex; gap: 6px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  border-radius: 8px; padding: 7px 12px; font-weight: 600; font-size: 13px; cursor: pointer;
+  white-space: nowrap; transition: border-color .15s, background .15s;
+}
+.btn:hover { border-color: var(--ink-2); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.ghost { background: transparent; }
+.btn.solid { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.solid:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.tiny { padding: 3px 8px; font-size: 11.5px; border-radius: 6px; }
+.btn.rec { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- main ---------- */
+.main { display: grid; grid-template-columns: minmax(0, 1fr) var(--rail); min-height: 0; }
+.stage { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; background: var(--well); }
+.artboard-wrap { position: relative; min-height: 0; display: grid; place-items: center; padding: 28px; overflow: hidden; }
+.artboard {
+  position: relative; box-shadow: var(--shadow); line-height: 0;
+  background-color: var(--check-b);
+  background-image:
+    linear-gradient(45deg, var(--check-a) 25%, transparent 25%, transparent 75%, var(--check-a) 75%),
+    linear-gradient(45deg, var(--check-a) 25%, transparent 25%, transparent 75%, var(--check-a) 75%);
+  background-size: 16px 16px; background-position: 0 0, 8px 8px;
+}
+.artboard canvas { display: block; width: 100%; height: 100%; }
+#anim { touch-action: none; cursor: crosshair; }
+.stage-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 8px 16px; border-top: 1px solid var(--line); color: var(--ink-2); min-height: 46px;
+}
+.anim-transport { display: flex; gap: 6px; }
+
+/* ---------- control rail ---------- */
+.panel { background: var(--surface); border-left: 1px solid var(--line); overflow-y: auto; min-height: 0; overscroll-behavior: contain; }
+.sec { border-bottom: 1px solid var(--line); }
+.sec > summary {
+  list-style: none; cursor: pointer; padding: 13px 16px; display: flex; align-items: center; justify-content: space-between;
+  font: 500 11px var(--font-mono); text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink);
+}
+.sec > summary::-webkit-details-marker { display: none; }
+.sec > summary::after { content: '+'; font-size: 14px; color: var(--ink-2); }
+.sec[open] > summary::after { content: '–'; }
+.sec-body { padding: 0 16px 16px; display: grid; gap: 12px; }
+.app[data-view="gen"] .sec[data-view="anim"], .app[data-view="anim"] .sec[data-view="gen"] { display: none; }
+
+.ctls { display: grid; gap: 12px; }
+.ctl { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 10px; }
+.ctl > label, .field-label { font-weight: 600; font-size: 12.5px; }
+.ctl > output { font: 400 10.5px var(--font-mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ctl > .full { grid-column: 1 / -1; }
+.ctl[hidden] { display: none; }
+.hint { margin: 0; font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+.hint.flush { flex: 1; min-width: 0; }
+.hint.warn { color: var(--accent); }
+
+textarea, input[type="text"], input[type="number"], select {
+  width: 100%; border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 8px 10px;
+}
+textarea { resize: vertical; min-height: 64px; font: 700 18px/1.15 var(--font-ui); letter-spacing: 0.04em; text-transform: uppercase; }
+select { appearance: none; padding-right: 28px; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-2) 50%), linear-gradient(135deg, var(--ink-2) 50%, transparent 50%);
+  background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 20px; background: transparent; cursor: pointer; margin: 0; }
+input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: var(--line); border-radius: 2px; }
+input[type="range"]::-moz-range-track { height: 2px; background: var(--line); border-radius: 2px; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--ink); margin-top: -6px; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--ink); }
+input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--ink); }
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--focus); }
+
+.seg { display: flex; flex-wrap: wrap; gap: 2px; padding: 2px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+.seg button { flex: 1; border: 0; background: transparent; padding: 5px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+.seg button[aria-checked="true"] { background: var(--ink); color: var(--paper); }
+
+.switch { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; font-weight: 600; font-size: 12.5px; }
+.switch input { appearance: none; width: 32px; height: 18px; border-radius: 999px; background: var(--line); position: relative; cursor: pointer; transition: background .15s; flex: none; }
+.switch input::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); transition: transform .15s; }
+.switch input:checked { background: var(--ink); }
+.switch input:checked::after { transform: translateX(14px); }
+
+.color-ctl { display: flex; align-items: center; gap: 8px; }
+input[type="color"] { -webkit-appearance: none; appearance: none; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 50%; padding: 0; background: none; cursor: pointer; flex: none; }
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 50%; }
+input[type="color"]::-moz-color-swatch { border: 0; border-radius: 50%; }
+.hex { width: 92px !important; font: 400 11.5px var(--font-mono) !important; padding: 6px 8px !important; text-transform: lowercase; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* gradient editor */
+.grad { display: grid; gap: 8px; }
+.grad-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.grad-tools { display: flex; gap: 4px; }
+.grad-bar { position: relative; height: 34px; border-radius: 8px; border: 1px solid var(--line); cursor: copy; margin: 0 8px; touch-action: none; }
+.grad-stop {
+  position: absolute; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.25); cursor: grab; padding: 0;
+}
+.grad-stop[aria-pressed="true"] { width: 24px; height: 24px; margin: -12px 0 0 -12px; box-shadow: 0 0 0 2px var(--ink), 0 2px 6px rgba(0,0,0,.3); }
+.grad-edit { display: flex; align-items: center; gap: 8px; }
+
+/* kerning */
+.kern { display: grid; gap: 8px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.kern-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pairs { display: flex; flex-wrap: wrap; gap: 4px; }
+.pair {
+  display: inline-flex; align-items: baseline; gap: 6px; border: 1px solid var(--line); background: var(--paper);
+  border-radius: 6px; padding: 4px 8px; cursor: pointer; font: 700 13px var(--font-ui); letter-spacing: 0.08em;
+}
+.pair small { font: 400 10px var(--font-mono); letter-spacing: 0; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.pair.manual small { color: var(--accent); }
+.pair[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pair[aria-selected="true"] small { color: inherit; }
+.kern-edit { display: grid; gap: 8px; }
+.kern-steps { display: flex; gap: 4px; flex-wrap: wrap; }
+#view { cursor: text; }
+.kern-marks { position: absolute; inset: 0; pointer-events: none; }
+.kern-mark { position: absolute; width: 0; border-left: 2px solid var(--accent); transform: translateX(-1px); }
+.kern-mark span {
+  position: absolute; bottom: 100%; left: 0; transform: translate(-50%, -4px); white-space: nowrap;
+  background: var(--accent); color: var(--accent-ink); font: 500 10px var(--font-mono); padding: 2px 5px; border-radius: 4px; line-height: 1.3;
+}
+
+/* presets */
+.presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.preset { display: grid; gap: 4px; justify-items: center; padding: 6px 4px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); cursor: pointer; font-size: 11.5px; font-weight: 600; }
+.preset:hover { border-color: var(--ink-2); }
+.preset canvas { width: 100%; max-width: 84px; aspect-ratio: 1; border-radius: 6px; display: block; }
+
+/* modes */
+.modes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.mode { border: 1px solid var(--line); background: var(--paper); border-radius: 10px; padding: 10px 4px 8px; display: grid; justify-items: center; gap: 4px; cursor: pointer; font-size: 12px; font-weight: 700; }
+.mode svg { width: 30px; height: 30px; }
+.mode[aria-checked="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* palettes */
+.pal { display: grid; gap: 8px; }
+.pal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.pal-chip {
+  display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); background: var(--paper); border-radius: 8px;
+  padding: 7px 8px; cursor: pointer; font-size: 12px; font-weight: 600; min-width: 0; text-align: left;
+}
+.pal-chip span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pal-sw { flex: none; width: 34px; height: 14px; border-radius: 999px; margin-left: 4px; }
+.pal-chip[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.preset[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+/* export */
+.export-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.export-row > input[type="text"] { flex: 1; min-width: 0; width: auto; }
+.export-row.split > * { flex: 1; }
+.ctl-inline { flex: 1; min-width: 0; }
+.font-box { display: grid; gap: 8px; padding: 12px; border: 1px dashed var(--line); border-radius: 10px; }
+.font-preview { display: grid; gap: 8px; }
+.specimen { font-size: 64px; line-height: 1.05; word-break: break-word; padding: 10px; border-radius: 8px; background: var(--paper); min-height: 90px; }
+.rec-progress { height: 4px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.rec-progress > div { height: 100%; width: 0; background: var(--accent); }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px);
+  background: var(--ink); color: var(--paper); padding: 9px 14px; border-radius: 10px; font-weight: 600; font-size: 13px;
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; max-width: calc(100% - 32px);
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 860px) {
+  .app { height: auto; min-height: 100%; }
+  .main { grid-template-columns: minmax(0, 1fr); }
+  .artboard-wrap { height: min(68vh, 560px); padding: 16px; }
+  .panel { border-left: 0; overflow: visible; }
+  .bar-actions { margin-left: 0; }
+}
+@media (max-width: 480px) {
+  .bar { gap: 10px; }
+  .brand-name { display: none; }
+  .presets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast, .btn, .switch input, .switch input::after { transition: none; }
+}
+
+</style>
+
+<div class="app" id="app">
+  <header class="bar">
+    <div class="brand">
+      <canvas id="mark" class="mark" width="160" height="56" aria-hidden="true"></canvas>
+      <span class="brand-name">Coil Type</span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="View">
+      <button class="tab" id="tab-gen" role="tab" aria-selected="true" aria-controls="stage">Generator</button>
+      <button class="tab" id="tab-anim" role="tab" aria-selected="false" aria-controls="stage">Animate</button>
+    </nav>
+    <div class="bar-actions">
+      <button class="btn ghost" id="undo" title="Undo (Ctrl/Cmd+Z)" disabled>Undo</button>
+      <button class="btn ghost" id="redo" title="Redo (Shift+Ctrl/Cmd+Z)" disabled>Redo</button>
+      <button class="btn" id="shuffle" title="Random colours and shape">Shuffle</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="stage" id="stage" aria-label="Preview">
+      <div class="artboard-wrap" id="artboardWrap">
+        <div class="artboard" id="artboard">
+          <canvas id="view" aria-label="Lettering preview. Click between two letters to kern them."></canvas>
+          <div class="kern-marks" id="kernMarks" aria-hidden="true"></div>
+          <canvas id="anim" aria-label="Animated lettering" hidden></canvas>
+        </div>
+      </div>
+      <div class="stage-foot">
+        <span id="info" class="mono"></span>
+        <div class="anim-transport" id="transport" hidden>
+          <button class="btn" id="play" aria-pressed="true">Pause</button>
+          <button class="btn" id="restart" title="Restart the animation">Restart</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel" aria-label="Settings">
+      <details class="sec" data-view="anim" open>
+        <summary>Motion</summary>
+        <div class="sec-body">
+          <div class="modes" id="modes" role="radiogroup" aria-label="Animation mode"></div>
+          <p class="hint" id="modeHint"></p>
+          <div id="motionCtls" class="ctls"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Text</summary>
+        <div class="sec-body">
+          <label class="field-label" for="text">Letters</label>
+          <textarea id="text" rows="3" maxlength="400" spellcheck="false" autocomplete="off"></textarea>
+          <p class="hint" id="textHint">A–Z, 0–9 and . , : ; ! ? ' " - + = / ( ) * # &lt; &gt; &amp; ♥. Lowercase shows as capitals.</p>
+          <div id="textCtls" class="ctls"></div>
+          <div class="kern" id="kern">
+            <div class="kern-head">
+              <span class="field-label">Pair kerning</span>
+              <button class="btn tiny" id="kernClear" title="Remove all your pair adjustments">Clear adjustments</button>
+            </div>
+            <div class="pairs" id="pairs" role="listbox" aria-label="Letter pairs in your text"></div>
+            <div class="kern-edit" id="kernEdit" hidden>
+              <div class="ctl">
+                <label for="kernRange" id="kernLabel"></label>
+                <output for="kernRange" id="kernOut"></output>
+                <input type="range" id="kernRange" class="full" min="-400" max="300" step="5" title="Double-click to reset">
+              </div>
+              <div class="kern-steps">
+                <button class="btn tiny" id="kernTighter" title="Tighter (Alt + ←)">Tighter</button>
+                <button class="btn tiny" id="kernLooser" title="Looser (Alt + →)">Looser</button>
+                <button class="btn tiny ghost" id="kernReset">Reset pair</button>
+              </div>
+              <p class="hint" id="kernSum"></p>
+            </div>
+            <p class="hint">Click between two letters on the canvas or pick a pair. Alt/Option + ← → nudges the selected pair, Shift for bigger steps. A pair’s kerning applies everywhere it appears and is saved into the font.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Looks</summary>
+        <div class="sec-body">
+          <p class="hint">Looks change the shape and finish. Your colours stay as they are.</p>
+          <div class="presets" id="presets"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Shape</summary>
+        <div class="sec-body"><div id="shapeCtls" class="ctls"></div></div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Colour</summary>
+        <div class="sec-body">
+          <div class="pal">
+            <div class="grad-head">
+              <span class="field-label">Palettes</span>
+              <button class="btn tiny" id="palSave" title="Use these colours for new work and for Reset all">Save as my default</button>
+            </div>
+            <div class="pal-grid" id="palettes"></div>
+          </div>
+          <div class="grad" id="grad">
+            <div class="grad-head">
+              <span class="field-label">Gradient</span>
+              <div class="grad-tools">
+                <button class="btn tiny" id="stopFlip" title="Reverse the gradient">Reverse</button>
+                <button class="btn tiny" id="stopDel" title="Remove the selected stop">Remove stop</button>
+              </div>
+            </div>
+            <div class="grad-bar" id="gradBar" title="Click to add a stop, drag stops to move them"></div>
+            <div class="grad-edit">
+              <input type="color" id="stopColor" aria-label="Stop colour">
+              <input type="text" id="stopHex" class="hex" maxlength="7" spellcheck="false" aria-label="Stop colour hex">
+              <span class="mono small" id="stopPos"></span>
+            </div>
+          </div>
+          <div id="colorCtls" class="ctls"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both">
+        <summary>Finish</summary>
+        <div class="sec-body"><div id="finishCtls" class="ctls"></div></div>
+      </details>
+
+      <details class="sec" data-view="both">
+        <summary>Canvas</summary>
+        <div class="sec-body"><div id="canvasCtls" class="ctls"></div></div>
+      </details>
+
+      <details class="sec" data-view="gen" open>
+        <summary>Export</summary>
+        <div class="sec-body">
+          <div class="export-row">
+            <div class="ctl-inline" id="pngScaleCtl"></div>
+            <button class="btn solid" id="savePng">Save PNG</button>
+          </div>
+          <div class="export-row">
+            <span class="hint flush">Vectors with gradients. Dot screen stays in the PNG.</span>
+            <button class="btn solid" id="saveSvg">Save SVG</button>
+          </div>
+          <div class="font-box">
+            <label class="field-label" for="fontName">Font name</label>
+            <div class="export-row">
+              <input type="text" id="fontName" value="Coil" maxlength="28" spellcheck="false">
+              <button class="btn solid" id="saveFont">Save font (.ttf)</button>
+            </div>
+            <p class="hint">Uses the current shape and colours. Colour shows in Chrome, Edge, Firefox, Safari and Adobe apps; other apps draw it as solid shapes. Blend modes, grain and dots stay in images.</p>
+            <button class="btn" id="previewFont">Try the font here</button>
+            <div class="font-preview" id="fontPreview" hidden>
+              <input type="text" id="fontSample" value="TYPE 2026" spellcheck="false" aria-label="Sample text for the font preview">
+              <div class="specimen" id="specimen"></div>
+              <p class="hint mono small" id="fontInfo"></p>
+            </div>
+          </div>
+          <div class="export-row split">
+            <button class="btn" id="saveJson">Save settings</button>
+            <label class="btn" for="loadJson">Load settings</label>
+            <input type="file" id="loadJson" accept=".json,application/json" hidden>
+            <button class="btn ghost" id="reset">Reset all</button>
+          </div>
+        </div>
+      </details>
+
+
+      <details class="sec" data-view="anim" open>
+        <summary>Record</summary>
+        <div class="sec-body">
+          <div class="export-row">
+            <div class="ctl-inline" id="recLenCtl"></div>
+            <button class="btn solid" id="record">Record video</button>
+          </div>
+          <div class="rec-progress" id="recProgress" hidden><div id="recBar"></div></div>
+          <p class="hint">Records at the full canvas size. Saves MP4 where the browser supports it, otherwise WebM.</p>
+        </div>
+      </details>
+    </aside>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+/* Coil Type — glyph skeletons.
+   Each glyph is a centre-line drawn in SVG path syntax. Cap top is y=0, baseline y=1000.
+   Every subpath becomes one chain of circles; Z marks a closed loop. */
+(function (root) {
+  const Coil = (root.Coil = root.Coil || {});
+
+  const DOT = (cx, cy) => `M${cx - 50},${cy} A50,50 0 0 1 ${cx + 50},${cy} A50,50 0 0 1 ${cx - 50},${cy} Z`;
+
+  // Direction matters: loops run clockwise and strokes trace the outer contour, so a gradient
+  // set relative to the stroke lights every letter from the outside, like the reference O.
+  Coil.GLYPHS = {
+    A: 'M0,1000 L0,300 A300,300 0 0 1 600,300 L600,1000 M0,620 L600,620',
+    B: 'M0,1000 L0,0 L320,0 A235,235 0 0 1 320,470 L0,470 M0,470 L350,470 A265,265 0 0 1 350,1000 L0,1000',
+    C: 'M560,850 A300,300 0 0 1 0,700 L0,300 A300,300 0 0 1 560,150',
+    D: 'M0,0 L300,0 A300,300 0 0 1 600,300 L600,700 A300,300 0 0 1 300,1000 L0,1000 Z',
+    E: 'M560,1000 L0,1000 L0,0 L560,0 M0,500 L480,500',
+    F: 'M0,1000 L0,0 L560,0 M0,480 L460,480',
+    G: 'M340,520 L600,520 L600,700 A300,300 0 0 1 0,700 L0,300 A300,300 0 0 1 560,150',
+    H: 'M0,1000 L0,0 M600,0 L600,1000 M0,500 L600,500',
+    I: 'M0,0 L0,1000',
+    J: 'M500,0 L500,750 A250,250 0 0 1 0,750',
+    K: 'M0,0 L0,1000 M560,0 L60,500 L580,1000',
+    L: 'M540,1000 L0,1000 L0,0',
+    M: 'M0,1000 L0,0 L340,620 L680,0 L680,1000',
+    N: 'M0,1000 L0,0 L580,1000 L580,0',
+    O: 'M0,300 A300,300 0 0 1 600,300 L600,700 A300,300 0 0 1 0,700 Z',
+    P: 'M0,1000 L0,0 L300,0 A260,260 0 0 1 300,520 L0,520',
+    Q: 'M0,300 A300,300 0 0 1 600,300 L600,700 A300,300 0 0 1 0,700 Z M380,760 L640,1060',
+    R: 'M0,1000 L0,0 L300,0 A260,260 0 0 1 300,520 L0,520 M280,520 L590,1000',
+    S: 'M40,875 A300,250 0 0 0 600,750 C600,550 0,450 0,250 A300,250 0 0 1 560,125',
+    T: 'M0,0 L640,0 M320,0 L320,1000',
+    U: 'M600,0 L600,700 A300,300 0 0 1 0,700 L0,0',
+    V: 'M620,0 L310,1000 L0,0',
+    W: 'M820,0 L630,1000 L410,330 L190,1000 L0,0',
+    X: 'M0,0 L600,1000 M600,0 L0,1000',
+    Y: 'M620,0 L310,540 L0,0 M310,540 L310,1000',
+    Z: 'M20,0 L580,0 L0,1000 L600,1000',
+
+    0: 'M0,270 A270,270 0 0 1 540,270 L540,730 A270,270 0 0 1 0,730 Z',
+    1: 'M40,220 L300,0 L300,1000',
+    2: 'M20,260 A280,260 0 0 1 580,260 C580,520 0,680 0,1000 L600,1000',
+    3: 'M74,125 A250,250 0 1 1 290,500 A250,250 0 1 1 74,875',
+    4: 'M600,680 L0,680 L440,0 L440,1000',
+    5: 'M560,0 L70,0 L40,430 C110,395 200,380 290,380 A310,310 0 1 1 25,850',
+    6: 'M0,700 A300,300 0 0 1 600,700 A300,300 0 0 1 0,700 L0,500 C0,0 400,10 510,90',
+    7: 'M0,0 L600,0 L200,1000',
+    8: 'M300,470 A265,265 0 0 1 300,1000 A265,265 0 0 1 300,470 A235,235 0 0 0 300,0 A235,235 0 0 0 300,470 Z',
+    9: 'M600,300 A300,300 0 0 1 0,300 A300,300 0 0 1 600,300 L600,500 C600,1000 200,990 90,910',
+
+    '.': DOT(50, 950),
+    ',': 'M120,880 L120,1000 C120,1080 80,1130 20,1170',
+    ':': DOT(50, 430) + ' ' + DOT(50, 950),
+    ';': DOT(100, 430) + ' M120,880 L120,1000 C120,1080 80,1130 20,1170',
+    '!': 'M50,0 L50,640 ' + DOT(50, 950),
+    '?': 'M20,250 A250,250 0 1 1 340,490 C290,520 270,560 270,680 ' + DOT(270, 950),
+    "'": 'M0,0 L0,300',
+    '"': 'M0,0 L0,300 M200,0 L200,300',
+    '-': 'M0,560 L360,560',
+    '+': 'M0,540 L480,540 M240,300 L240,780',
+    '=': 'M0,420 L480,420 M0,680 L480,680',
+    '/': 'M0,1000 L440,0',
+    '(': 'M260,1060 C80,860 0,670 0,500 C0,330 80,140 260,-60',
+    ')': 'M0,-60 C180,140 260,330 260,500 C260,670 180,860 0,1060',
+    '*': 'M200,0 L200,400 M27,100 L373,300 M373,100 L27,300',
+    '#': 'M190,150 L130,850 M450,150 L390,850 M20,350 L600,350 M0,650 L580,650',
+    '<': 'M480,240 L0,520 L480,800',
+    '>': 'M0,240 L480,520 L0,800',
+    '&': 'M600,1000 L170,540 C60,420 60,0 300,0 C520,0 520,330 320,430 L180,500 C40,580 0,690 0,780 C0,920 120,1000 300,1000 C450,1000 540,900 600,720',
+    '♥': 'M300,1000 L70,680 C-40,520 10,250 170,250 C250,250 300,310 300,390 C300,310 350,250 430,250 C590,250 640,520 530,680 Z',
+  };
+
+  Coil.SPACE_WIDTH = 360;
+
+  /* Map any typed character to a glyph key, or ' ' for a space, or null when unsupported. */
+  Coil.glyphKey = function (ch) {
+    if (ch === ' ' || ch === '\t') return ' ';
+    let c = ch.toUpperCase();
+    if (Coil.GLYPHS[c]) return c;
+    const base = c.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    if (base && Coil.GLYPHS[base]) return base;
+    const alias = { '’': "'", '‘': "'", '“': '"', '”': '"', '–': '-', '—': '-', '❤': '♥', '♡': '♥', '×': '*', '…': '.' };
+    if (alias[ch]) return alias[ch];
+    return null;
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Coil Type — path geometry: parse skeleton paths, flatten, skew/stretch, round corners,
+   and sample positions + tangents by arc length. No DOM, so it also runs in Node. */
+(function (root) {
+  const Coil = (root.Coil = root.Coil || {});
+  const TAU = Math.PI * 2;
+  const STEP = 5; // flattening resolution in skeleton units
+
+  function tokenize(d) {
+    const re = /([MmLlHhVvCcQqAaZz])|(-?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)/g;
+    const out = [];
+    let m;
+    while ((m = re.exec(d))) out.push(m[1] ? m[1] : parseFloat(m[2]));
+    return out;
+  }
+
+  function flatCubic(x0, y0, x1, y1, x2, y2, x3, y3) {
+    const net = Math.hypot(x1 - x0, y1 - y0) + Math.hypot(x2 - x1, y2 - y1) + Math.hypot(x3 - x2, y3 - y2);
+    const n = Math.max(6, Math.ceil(net / STEP));
+    const pts = [];
+    for (let k = 1; k <= n; k++) {
+      const t = k / n, u = 1 - t;
+      pts.push([
+        u * u * u * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3,
+        u * u * u * y0 + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3,
+      ]);
+    }
+    return pts;
+  }
+
+  function flatQuad(x0, y0, x1, y1, x2, y2) {
+    const net = Math.hypot(x1 - x0, y1 - y0) + Math.hypot(x2 - x1, y2 - y1);
+    const n = Math.max(4, Math.ceil(net / STEP));
+    const pts = [];
+    for (let k = 1; k <= n; k++) {
+      const t = k / n, u = 1 - t;
+      pts.push([u * u * x0 + 2 * u * t * x1 + t * t * x2, u * u * y0 + 2 * u * t * y1 + t * t * y2]);
+    }
+    return pts;
+  }
+
+  // SVG endpoint arc → centre parameterisation (SVG spec F.6.5), then flatten.
+  function flatArc(x1, y1, rx, ry, phiDeg, fa, fs, x2, y2) {
+    if (!rx || !ry) return [[x2, y2]];
+    rx = Math.abs(rx); ry = Math.abs(ry);
+    const phi = (phiDeg * Math.PI) / 180, cs = Math.cos(phi), sn = Math.sin(phi);
+    const dx = (x1 - x2) / 2, dy = (y1 - y2) / 2;
+    const x1p = cs * dx + sn * dy, y1p = -sn * dx + cs * dy;
+    const lam = (x1p * x1p) / (rx * rx) + (y1p * y1p) / (ry * ry);
+    if (lam > 1) { const s = Math.sqrt(lam); rx *= s; ry *= s; }
+    const num = rx * rx * ry * ry - rx * rx * y1p * y1p - ry * ry * x1p * x1p;
+    const den = rx * rx * y1p * y1p + ry * ry * x1p * x1p;
+    let co = den ? Math.sqrt(Math.max(0, num / den)) : 0;
+    if (!!fa === !!fs) co = -co;
+    const cxp = (co * rx * y1p) / ry, cyp = (-co * ry * x1p) / rx;
+    const cx = cs * cxp - sn * cyp + (x1 + x2) / 2, cy = sn * cxp + cs * cyp + (y1 + y2) / 2;
+    const ang = (ux, uy, vx, vy) => Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy);
+    const t1 = ang(1, 0, (x1p - cxp) / rx, (y1p - cyp) / ry);
+    let dt = ang((x1p - cxp) / rx, (y1p - cyp) / ry, (-x1p - cxp) / rx, (-y1p - cyp) / ry);
+    if (!fs && dt > 0) dt -= TAU;
+    else if (fs && dt < 0) dt += TAU;
+    const n = Math.max(8, Math.ceil((Math.abs(dt) * Math.max(rx, ry)) / STEP));
+    const pts = [];
+    for (let k = 1; k <= n; k++) {
+      const t = t1 + (dt * k) / n;
+      pts.push([cx + rx * Math.cos(t) * cs - ry * Math.sin(t) * sn, cy + rx * Math.cos(t) * sn + ry * Math.sin(t) * cs]);
+    }
+    pts[pts.length - 1] = [x2, y2];
+    return pts;
+  }
+
+  /* Returns subpaths as { P: [[x,y]...], F: [0|1...] (1 = original vertex), closed } */
+  function parsePath(d) {
+    const t = tokenize(d);
+    const subs = [];
+    let i = 0, x = 0, y = 0, sx = 0, sy = 0, cmd = 'M', cur = null;
+    const num = () => t[i++];
+    const push = (pts) => {
+      for (let k = 0; k < pts.length; k++) { cur.P.push(pts[k]); cur.F.push(k === pts.length - 1 ? 1 : 0); }
+    };
+    while (i < t.length) {
+      if (typeof t[i] === 'string') cmd = t[i++];
+      const rel = cmd === cmd.toLowerCase();
+      const C = cmd.toUpperCase();
+      const ox = rel ? x : 0, oy = rel ? y : 0;
+      if (C === 'M') {
+        x = ox + num(); y = oy + num(); sx = x; sy = y;
+        cur = { P: [[x, y]], F: [1], closed: false };
+        subs.push(cur);
+        cmd = rel ? 'l' : 'L';
+      } else if (C === 'L') { x = ox + num(); y = oy + num(); push([[x, y]]); }
+      else if (C === 'H') { x = ox + num(); push([[x, y]]); }
+      else if (C === 'V') { y = oy + num(); push([[x, y]]); }
+      else if (C === 'C') {
+        const a = [ox + num(), oy + num(), ox + num(), oy + num(), ox + num(), oy + num()];
+        push(flatCubic(x, y, ...a)); x = a[4]; y = a[5];
+      } else if (C === 'Q') {
+        const a = [ox + num(), oy + num(), ox + num(), oy + num()];
+        push(flatQuad(x, y, ...a)); x = a[2]; y = a[3];
+      } else if (C === 'A') {
+        const rx = num(), ry = num(), rot = num(), fa = num(), fs = num();
+        const ex = ox + num(), ey = oy + num();
+        push(flatArc(x, y, rx, ry, rot, fa, fs, ex, ey)); x = ex; y = ey;
+      } else if (C === 'Z') {
+        if (Math.hypot(x - sx, y - sy) > 1e-6) push([[sx, sy]]);
+        cur.closed = true; x = sx; y = sy;
+        if (typeof t[i] === 'number') i++; // malformed input guard
+      } else i++;
+    }
+    return subs;
+  }
+
+  function cumLengths(P) {
+    const cum = new Float64Array(P.length);
+    for (let k = 1; k < P.length; k++) cum[k] = cum[k - 1] + Math.hypot(P[k][0] - P[k - 1][0], P[k][1] - P[k - 1][1]);
+    return cum;
+  }
+
+  function pointAtLen(P, cum, s) {
+    let lo = 0, hi = P.length - 1;
+    if (s <= 0) return { x: P[0][0], y: P[0][1], i: 0 };
+    if (s >= cum[hi]) return { x: P[hi][0], y: P[hi][1], i: hi - 1 };
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (cum[m] <= s) lo = m; else hi = m; }
+    const seg = cum[hi] - cum[lo], u = seg > 0 ? (s - cum[lo]) / seg : 0;
+    return { x: P[lo][0] + (P[hi][0] - P[lo][0]) * u, y: P[lo][1] + (P[hi][1] - P[lo][1]) * u, i: lo };
+  }
+
+  // Closed loops: move the start to the middle of the first original segment so every
+  // original vertex is interior and can be rounded like any other corner.
+  function rotateClosed(sub) {
+    const { P, F } = sub;
+    let j1 = 1;
+    while (j1 < P.length - 1 && !F[j1]) j1++;
+    const cum = cumLengths(P);
+    const mid = pointAtLen(P, cum, cum[j1] / 2);
+    const body = P.slice(0, P.length - 1), fb = F.slice(0, F.length - 1);
+    const k = mid.i + 1;
+    const NP = [[mid.x, mid.y]].concat(body.slice(k), body.slice(0, k), [[mid.x, mid.y]]);
+    const NF = [0].concat(fb.slice(k), fb.slice(0, k), [0]);
+    sub.P = NP; sub.F = NF;
+  }
+
+  function roundCorners(sub, rho) {
+    const { P, F } = sub;
+    if (rho <= 0 || P.length < 3) return;
+    const cum = cumLengths(P);
+    const verts = [];
+    for (let k = 0; k < P.length; k++) if (F[k] || k === 0 || k === P.length - 1) verts.push(k);
+    const corners = [];
+    for (let v = 1; v < verts.length - 1; v++) {
+      const k = verts[v];
+      if (k === 0 || k === P.length - 1) continue;
+      const ax = P[k][0] - P[k - 1][0], ay = P[k][1] - P[k - 1][1];
+      const bx = P[k + 1][0] - P[k][0], by = P[k + 1][1] - P[k][1];
+      const la = Math.hypot(ax, ay), lb = Math.hypot(bx, by);
+      if (!la || !lb) continue;
+      const cosA = Math.max(-1, Math.min(1, (ax * bx + ay * by) / (la * lb)));
+      const alpha = Math.acos(cosA);
+      if (alpha < 0.14) continue;
+      const prevLen = cum[k] - cum[verts[v - 1]], nextLen = cum[verts[v + 1]] - cum[k];
+      const d = Math.min(rho * Math.min(Math.tan(alpha / 2), 2.2), prevLen * 0.5, nextLen * 0.5);
+      if (d < 0.5) continue;
+      corners.push({ k, sIn: cum[k] - d, sOut: cum[k] + d, d });
+    }
+    if (!corners.length) return;
+    const NP = [], NF = [];
+    let cursor = 0;
+    for (const c of corners) {
+      const a = pointAtLen(P, cum, c.sIn), b = pointAtLen(P, cum, c.sOut);
+      for (let q = cursor; q <= a.i; q++) { NP.push(P[q]); NF.push(F[q]); }
+      const V = P[c.k];
+      const n = Math.max(4, Math.ceil((2 * c.d) / STEP));
+      NP.push([a.x, a.y]); NF.push(0);
+      for (let q = 1; q < n; q++) {
+        const t = q / n, u = 1 - t;
+        NP.push([u * u * a.x + 2 * u * t * V[0] + t * t * b.x, u * u * a.y + 2 * u * t * V[1] + t * t * b.y]);
+        NF.push(0);
+      }
+      NP.push([b.x, b.y]); NF.push(0);
+      cursor = b.i + 1;
+    }
+    for (let q = cursor; q < P.length; q++) { NP.push(P[q]); NF.push(F[q]); }
+    sub.P = NP; sub.F = NF;
+  }
+
+  function finishStroke(sub) {
+    const P = [];
+    for (const p of sub.P) {
+      const last = P[P.length - 1];
+      if (!last || Math.hypot(p[0] - last[0], p[1] - last[1]) > 1e-6) P.push(p);
+    }
+    if (P.length === 1) P.push([P[0][0], P[0][1]]);
+    const n = P.length;
+    const xs = new Float64Array(n), ys = new Float64Array(n);
+    for (let k = 0; k < n; k++) { xs[k] = P[k][0]; ys[k] = P[k][1]; }
+    const cum = new Float64Array(n);
+    for (let k = 1; k < n; k++) cum[k] = cum[k - 1] + Math.hypot(xs[k] - xs[k - 1], ys[k] - ys[k - 1]);
+    return { xs, ys, cum, L: cum[n - 1], closed: sub.closed && cum[n - 1] > 1, n };
+  }
+
+  const cache = new Map();
+
+  /* Prepare a glyph: flattened, stretched (width), slanted, corner-rounded strokes. */
+  Coil.prepGlyph = function (key, cornerRho, widthScale, slant) {
+    const ck = key + '|' + cornerRho.toFixed(1) + '|' + widthScale.toFixed(3) + '|' + slant.toFixed(3);
+    let g = cache.get(ck);
+    if (g) return g;
+    const d = Coil.GLYPHS[key];
+    const subs = parsePath(d);
+    for (const s of subs) {
+      s.P = s.P.map(([x, y]) => [x * widthScale + slant * (1000 - y), y]);
+      if (s.closed && s.P.length > 3) rotateClosed(s);
+      roundCorners(s, cornerRho);
+    }
+    const strokes = subs.map(finishStroke);
+    let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, total = 0;
+    for (const st of strokes) {
+      total += st.L;
+      for (let k = 0; k < st.n; k++) {
+        if (st.xs[k] < xMin) xMin = st.xs[k];
+        if (st.xs[k] > xMax) xMax = st.xs[k];
+        if (st.ys[k] < yMin) yMin = st.ys[k];
+        if (st.ys[k] > yMax) yMax = st.ys[k];
+      }
+    }
+    g = { key, strokes, xMin, xMax, yMin, yMax, width: xMax - xMin, total };
+    if (cache.size > 600) cache.clear();
+    cache.set(ck, g);
+    return g;
+  };
+
+  /* Position + tangent angle at arc length s. Writes into o = {x, y, ang}. */
+  Coil.sampleStroke = function (st, s, o) {
+    const L = st.L;
+    if (L <= 0) { o.x = st.xs[0]; o.y = st.ys[0]; o.ang = 0; return o; }
+    const at = (q) => {
+      if (st.closed) q = ((q % L) + L) % L;
+      else q = q < 0 ? 0 : q > L ? L : q;
+      const cum = st.cum;
+      let lo = 0, hi = st.n - 1;
+      while (hi - lo > 1) { const m = (lo + hi) >> 1; if (cum[m] <= q) lo = m; else hi = m; }
+      const seg = cum[hi] - cum[lo], u = seg > 0 ? (q - cum[lo]) / seg : 0;
+      return [st.xs[lo] + (st.xs[hi] - st.xs[lo]) * u, st.ys[lo] + (st.ys[hi] - st.ys[lo]) * u];
+    };
+    const p = at(s);
+    const dl = Math.min(4, L / 4);
+    let a = at(s - dl), b = at(s + dl);
+    if (!st.closed) {
+      if (s - dl < 0) a = at(0);
+      if (s + dl > L) b = at(L);
+    }
+    o.x = p[0]; o.y = p[1];
+    o.ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+    return o;
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Coil Type — engine: settings, colour, layout, circle chains and canvas rendering. */
+(function (root) {
+  const Coil = (root.Coil = root.Coil || {});
+  const TAU = Math.PI * 2, DEG = Math.PI / 180;
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const smooth = (u) => u * u * (3 - 2 * u);
+  Coil.clamp = clamp;
+  Coil.smooth = smooth;
+
+  /* ---------------- colour ---------------- */
+  Coil.hexToRgb = function (hex) {
+    let h = String(hex || '#000').replace('#', '');
+    if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+    const n = parseInt(h.slice(0, 6), 16) || 0;
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  };
+  Coil.rgbToHex = function (rgb) {
+    return '#' + rgb.map((v) => clamp(Math.round(v), 0, 255).toString(16).padStart(2, '0')).join('');
+  };
+  function rgbToHsl([r, g, b]) {
+    r /= 255; g /= 255; b /= 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2;
+    if (mx === mn) return [0, 0, l];
+    const d = mx - mn, s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    let h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return [h * 60, s, l];
+  }
+  function hslToRgb([h, s, l]) {
+    h = ((h % 360) + 360) % 360 / 360;
+    if (!s) return [l * 255, l * 255, l * 255];
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+    const f = (t) => {
+      t = (t + 1) % 1;
+      return t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p;
+    };
+    return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
+  }
+  Coil.rgbToHsl = rgbToHsl;
+  Coil.hslToRgb = hslToRgb;
+  Coil.hueRotate = function (hex, deg) {
+    if (!deg) return hex;
+    const hsl = rgbToHsl(Coil.hexToRgb(hex));
+    hsl[0] += deg;
+    return Coil.rgbToHex(hslToRgb(hsl));
+  };
+  Coil.rgba = function (hex, a) {
+    const [r, g, b] = Coil.hexToRgb(hex);
+    return `rgba(${r},${g},${b},${a})`;
+  };
+
+  /* ---------------- settings ---------------- */
+  Coil.FORMATS = {
+    poster: { label: 'Poster 4:5', w: 1080, h: 1350 },
+    square: { label: 'Square 1:1', w: 1080, h: 1080 },
+    story: { label: 'Story 9:16', w: 1080, h: 1920 },
+    wide: { label: 'Wide 16:9', w: 1920, h: 1080 },
+    a4: { label: 'A4 at 300 dpi', w: 2480, h: 3508 },
+    fit: { label: 'Fit to text', w: 2400, h: 0 },
+    custom: { label: 'Custom size', w: 0, h: 0 },
+  };
+
+  Coil.BLENDS = [
+    ['source-over', 'Normal'], ['multiply', 'Multiply'], ['screen', 'Screen'], ['overlay', 'Overlay'],
+    ['darken', 'Darken'], ['lighten', 'Lighten'], ['color-dodge', 'Color dodge'], ['color-burn', 'Color burn'],
+    ['hard-light', 'Hard light'], ['soft-light', 'Soft light'], ['difference', 'Difference'], ['exclusion', 'Exclusion'],
+    ['hue', 'Hue'], ['saturation', 'Saturation'], ['color', 'Color'], ['luminosity', 'Luminosity'],
+  ];
+
+  // The "Poster" look is matched to the reference print: hot pink rim, blue body, bottle green shade, navy edge.
+  const POSTER = {
+    weight: 190, density: 0.22, corners: 0.35, width: 1, slant: 0,
+    taper: 0, contrast: 0, wave: 0, waveFreq: 3, jitter: 0,
+    style: 'disc', ringWidth: 0.1,
+    stops: [
+      { c: '#ff3c9e', p: 0 }, { c: '#8a74f2', p: 0.16 }, { c: '#3d8df5', p: 0.42 },
+      { c: '#0f6b35', p: 0.78 }, { c: '#0a0b3d', p: 1 },
+    ],
+    gradFollow: true, gradAngle: 90, twist: 0,
+    opacity: 0.76, outlineWidth: 0.014, outlineColor: '#0b0a3d', outlineOpacity: 0.45,
+    blend: 'source-over', hueDrift: 0, order: 'forward',
+    bg: '#dbd7d3', transparent: false, grain: 0.32, dots: 0.16, dotSize: 1, shadow: 0,
+  };
+
+  Coil.DEFAULTS = Object.assign(
+    { text: 'COIL\nTYPE', align: 'center', tracking: 30, lineHeight: 1, seed: 7, kernMode: 'none', kernStrength: 0.6, kerning: {} },
+    POSTER,
+    { format: 'poster', customW: 1600, customH: 1200, fill: 0.84 }
+  );
+
+  Coil.STYLE_KEYS = Object.keys(POSTER);
+
+  const st = (arr) => arr.map(([c, p]) => ({ c, p }));
+
+  /* Colour is kept apart from everything else: palettes only touch these keys, looks never do. */
+  Coil.PALETTE_KEYS = ['stops', 'bg', 'outlineColor'];
+  Coil.paletteOf = (S) => ({ stops: S.stops.map((x) => ({ ...x })), bg: S.bg, outlineColor: S.outlineColor });
+  Coil.PALETTES = [
+    { id: 'poster', name: 'Poster', p: Coil.paletteOf(POSTER) },
+    { id: 'lavender', name: 'Lavender', p: { stops: st([['#e7a8f2', 0], ['#a48ee0', 0.3], ['#7d78cc', 0.62], ['#23a386', 1]]), bg: '#e6e8e9', outlineColor: '#4a4896' } },
+    { id: 'riso', name: 'Riso', p: { stops: st([['#ff48b0', 0], ['#ffe14d', 0.5], ['#00a19b', 1]]), bg: '#f3eee4', outlineColor: '#2a2160' } },
+    { id: 'night', name: 'Night', p: { stops: st([['#00f0ff', 0], ['#7b2cff', 0.45], ['#ff2e88', 0.8], ['#1a0033', 1]]), bg: '#0d0c22', outlineColor: '#7af6ff' } },
+    { id: 'candy', name: 'Candy', p: { stops: st([['#ff7ab6', 0], ['#ffd166', 0.35], ['#7bdff2', 0.7], ['#b2f7ef', 1]]), bg: '#ffe4ee', outlineColor: '#5b2a86' } },
+    { id: 'chrome', name: 'Chrome', p: { stops: st([['#ffffff', 0], ['#9aa0a9', 0.28], ['#2b2e35', 0.5], ['#e1e5ea', 0.72], ['#4a4f58', 1]]), bg: '#17171b', outlineColor: '#000000' } },
+    { id: 'citrus', name: 'Citrus', p: { stops: st([['#ff5e00', 0], ['#ffb400', 0.4], ['#fff1b8', 0.7], ['#2b7a0b', 1]]), bg: '#fff7da', outlineColor: '#3a1500' } },
+    { id: 'ocean', name: 'Ocean', p: { stops: st([['#e6fcff', 0], ['#5ad1e6', 0.3], ['#1767c2', 0.68], ['#0b1f5c', 1]]), bg: '#d6e8ea', outlineColor: '#06123a' } },
+    { id: 'coral', name: 'Coral', p: { stops: st([['#ff4f2e', 0], ['#ff9fd0', 0.5], ['#2340ff', 1]]), bg: '#f2ede6', outlineColor: '#1b1446' } },
+    { id: 'ink', name: 'Ink', p: { stops: st([['#ffffff', 0], ['#f4f1ea', 0.35], ['#141414', 1]]), bg: '#f4f1ea', outlineColor: '#141414' } },
+  ];
+
+  /* Presets. Applying one sets shape and finish only (see Coil.PRESET_SKIP); the colours stay. */
+  Coil.PRESETS = [
+    { id: 'poster', name: 'Poster', s: POSTER },
+    { id: 'riso', name: 'Riso', s: { ...POSTER, blend: 'multiply', opacity: 0.72, outlineOpacity: 0, grain: 0.4, dots: 0.28, density: 0.24, gradAngle: 0, twist: 1 } },
+    { id: 'night', name: 'Night', s: { ...POSTER, blend: 'screen', opacity: 0.62, outlineOpacity: 0.35, outlineWidth: 0.02, grain: 0.22, dots: 0, gradAngle: 90 } },
+    { id: 'candy', name: 'Candy', s: { ...POSTER, opacity: 0.92, outlineOpacity: 0.55, dots: 0.08, grain: 0.2, corners: 0.6, gradAngle: 180 } },
+    { id: 'chrome', name: 'Chrome', s: { ...POSTER, outlineOpacity: 0.8, opacity: 1, grain: 0.25, dots: 0, gradAngle: -60, gradFollow: false } },
+    { id: 'citrus', name: 'Citrus', s: { ...POSTER, outlineOpacity: 0.5, dots: 0.12, twist: 2, gradAngle: 0 } },
+    { id: 'ocean', name: 'Ocean', s: { ...POSTER, density: 0.16, taper: 0.5 } },
+    { id: 'rings', name: 'Rings', s: { ...POSTER, style: 'ring', ringWidth: 0.07, density: 0.1, opacity: 0.9, grain: 0.3, dots: 0, gradAngle: 0 } },
+    { id: 'mono', name: 'Ink', s: { ...POSTER, outlineOpacity: 1, outlineWidth: 0.04, opacity: 1, dots: 0.22, grain: 0.35 } },
+  ];
+  Coil.PRESET_SKIP = new Set([...Coil.PALETTE_KEYS, 'hueDrift', 'transparent']);
+
+  Coil.normalizeSettings = function (s) {
+    const out = Object.assign({}, Coil.DEFAULTS, s || {});
+    if (!Array.isArray(out.stops) || out.stops.length < 2) out.stops = Coil.DEFAULTS.stops.map((x) => ({ ...x }));
+    out.stops = out.stops.map((x) => ({ c: /^#[0-9a-f]{6}$/i.test(x.c) ? x.c : '#888888', p: clamp(+x.p || 0, 0, 1) }));
+    if (!Coil.FORMATS[out.format]) out.format = 'poster';
+    out.text = String(out.text ?? '');
+    if (out.kernMode !== 'optical') out.kernMode = 'none';
+    out.kernStrength = clamp(+out.kernStrength || 0, 0, 1);
+    const kern = {};
+    if (out.kerning && typeof out.kerning === 'object') {
+      for (const [pair, v] of Object.entries(out.kerning)) {
+        if ([...pair].length === 2 && Number.isFinite(+v) && +v) kern[pair] = clamp(Math.round(+v), -800, 800);
+      }
+    }
+    out.kerning = kern;
+    return out;
+  };
+
+  /* ---------------- layout ---------------- */
+  function cornerRho(S) { return S.corners * 200; }
+
+  /* ---------------- kerning ----------------
+     Values are skeleton units (cap height 1000), added to the space between two neighbouring
+     letters. S.kerning holds manual pair adjustments ({ AT: -60 }); optical kerning compares
+     the two letters' side profiles so open pairs (AT, LT, DA) close up like straight pairs (HH). */
+  const BAND = 20;
+  const profileCache = new Map(), opticalCache = new Map();
+  const shapeSig = (S) => [S.weight, S.density, S.corners, S.width, S.slant, S.taper, S.contrast, S.wave, S.waveFreq, S.jitter, S.seed].join(',');
+
+  // Left and right ink edge of a letter per horizontal band, measured from its ink box's left edge.
+  function profile(key, S) {
+    const ck = shapeSig(S) + '|' + key;
+    let p = profileCache.get(ck);
+    if (p) return p;
+    const r0 = S.weight;
+    const prep = Coil.prepGlyph(key, cornerRho(S), S.width, S.slant);
+    const y0 = -r0, n = Math.ceil((1000 + 2 * r0) / BAND) + 1;
+    const left = new Float64Array(n).fill(Infinity), right = new Float64Array(n).fill(-Infinity);
+    for (const c of Coil.glyphCircles(prep, S)) {
+      const u = r0 + c.x - prep.xMin;
+      const j0 = Math.max(0, Math.ceil((c.y - c.r - y0) / BAND)), j1 = Math.min(n - 1, Math.floor((c.y + c.r - y0) / BAND));
+      for (let j = j0; j <= j1; j++) {
+        const dy = y0 + j * BAND - c.y, h = Math.sqrt(Math.max(0, c.r * c.r - dy * dy));
+        if (u - h < left[j]) left[j] = u - h;
+        if (u + h > right[j]) right[j] = u + h;
+      }
+    }
+    p = { left, right, adv: prep.width + 2 * r0, n };
+    if (profileCache.size > 500) profileCache.clear();
+    profileCache.set(ck, p);
+    return p;
+  }
+
+  // Average gap between two letters placed D apart, with open bands capped, plus the tightest gap.
+  function gaps(pl, pr, D, cap) {
+    let sum = 0, cnt = 0, minG = Infinity;
+    for (let j = 0; j < pl.n; j++) {
+      const a = pl.right[j], b = pr.left[j];
+      const ha = a > -Infinity, hb = b < Infinity;
+      if (!ha && !hb) continue;
+      let g = cap;
+      if (ha && hb) { g = D + b - a; if (g < minG) minG = g; if (g > cap) g = cap; }
+      sum += g; cnt++;
+    }
+    return { avg: cnt ? sum / cnt : cap, minG };
+  }
+
+  function optical(a, b, S) {
+    const ck = shapeSig(S) + '|' + S.tracking + '|' + S.kernStrength + '|' + a + b;
+    let v = opticalCache.get(ck);
+    if (v !== undefined) return v;
+    const r0 = S.weight, t = S.tracking;
+    const cap = Math.max(t, 0) + 0.8 * r0;
+    const ref = profile('H', S);
+    const target = gaps(ref, ref, ref.adv + t, cap).avg;
+    const pl = profile(a, S), pr = profile(b, S);
+    const { avg, minG } = gaps(pl, pr, pl.adv + t, cap);
+    let k = -(avg - target) * S.kernStrength;
+    const floor = t >= 0 ? t * 0.4 : t; // never pull the closest points tighter than this
+    if (minG < Infinity) k = Math.max(k, floor - minG);
+    k = clamp(k, -pl.adv * 0.6, r0);
+    v = Math.round(k / 5) * 5 || 0;
+    if (opticalCache.size > 6000) opticalCache.clear();
+    opticalCache.set(ck, v);
+    return v;
+  }
+
+  Coil.opticalKern = (a, b, S) => (S.kernMode === 'optical' ? optical(a, b, S) : 0);
+  Coil.manualKern = (a, b, S) => (S.kerning && S.kerning[a + b]) || 0;
+  Coil.kernPair = (a, b, S) => Coil.manualKern(a, b, S) + Coil.opticalKern(a, b, S);
+
+  /* Unique neighbouring letter pairs in a text, in reading order. */
+  Coil.textPairs = function (text) {
+    const pairs = [], seen = new Set();
+    for (const line of String(text).split('\n')) {
+      let prev = null;
+      for (const ch of line) {
+        const k = Coil.glyphKey(ch);
+        if (!k || k === ' ') { prev = null; continue; }
+        if (prev && !seen.has(prev + k)) { seen.add(prev + k); pairs.push(prev + k); }
+        prev = k;
+      }
+    }
+    return pairs;
+  };
+
+  /* Measure the text block in skeleton units. */
+  Coil.measure = function (S, text) {
+    const r = S.weight, ws = S.width;
+    const lines = String(text ?? S.text).split('\n');
+    const res = { lines: [], unsupported: new Set(), count: 0 };
+    for (const line of lines) {
+      let x = 0, any = false, prev = null;
+      const items = [];
+      for (const ch of line) {
+        const key = Coil.glyphKey(ch);
+        if (key === null) res.unsupported.add(ch);
+        if (key === null || key === ' ') { x += Coil.SPACE_WIDTH * ws + S.tracking; prev = null; continue; }
+        const prep = Coil.prepGlyph(key, cornerRho(S), ws, S.slant);
+        const kern = prev ? Coil.kernPair(prev, key, S) : 0;
+        x += kern;
+        items.push({ key, prep, lx: x, index: res.count++, pair: prev ? prev + key : null, kern });
+        x += prep.width + 2 * r + S.tracking;
+        prev = key;
+        any = true;
+      }
+      res.lines.push({ items, w: any ? Math.max(0, x - S.tracking) : x });
+    }
+    res.LH = (1000 + 2 * r) * S.lineHeight;
+    res.blockW = Math.max(res.count ? 1 : 1000, ...res.lines.map((l) => l.w));
+    res.blockH = (res.lines.length - 1) * res.LH + 1000 + 2 * r;
+    return res;
+  };
+
+  Coil.docSize = function (S, forAnim) {
+    let f = S.format;
+    if (forAnim && f === 'fit') f = 'wide';
+    if (f === 'custom') return { W: clamp(Math.round(S.customW) || 1600, 64, 8000), H: clamp(Math.round(S.customH) || 1200, 64, 8000) };
+    if (f === 'fit') {
+      const m = Coil.measure(S);
+      const W = 2400, k = (W * S.fill) / m.blockW;
+      return { W, H: clamp(Math.round(m.blockH * k + W * (1 - S.fill)), 64, 8000) };
+    }
+    const F = Coil.FORMATS[f];
+    return { W: F.w, H: F.h };
+  };
+
+  /* Place glyphs in document pixels. Each item gets tx/ty so that docX = tx + skelX*k. */
+  Coil.layout = function (S, W, H, opt = {}) {
+    const m = Coil.measure(S, opt.text);
+    const r = S.weight;
+    const fill = opt.fill ?? S.fill;
+    const k = Math.min((W * fill) / m.blockW, (H * fill) / m.blockH);
+    const bx = (W - m.blockW * k) / 2, by = (H - m.blockH * k) / 2;
+    const items = [];
+    m.lines.forEach((line, li) => {
+      const ox = S.align === 'left' ? 0 : S.align === 'right' ? m.blockW - line.w : (m.blockW - line.w) / 2;
+      for (const it of line.items) {
+        const x0 = bx + (ox + it.lx) * k, y0 = by + li * m.LH * k;
+        items.push({
+          key: it.key, prep: it.prep, index: it.index, line: li, pair: it.pair, kern: it.kern,
+          tx: bx + (ox + it.lx + r - it.prep.xMin) * k,
+          ty: by + (li * m.LH + r) * k,
+          x0, x1: x0 + (it.prep.width + 2 * r) * k, y0, y1: y0 + (1000 + 2 * r) * k,
+        });
+      }
+    });
+    return { items, k, count: m.count, unsupported: m.unsupported, block: { x: bx, y: by, w: m.blockW * k, h: m.blockH * k }, measure: m };
+  };
+
+  /* ---------------- circle chains ---------------- */
+  function hash(n) {
+    const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453;
+    return x - Math.floor(x);
+  }
+  Coil.hash = hash;
+
+  Coil.strokeCount = function (stroke, S) {
+    const sp = Math.max(2, S.density * S.weight);
+    if (stroke.L < 1) return 1;
+    return stroke.closed ? Math.max(3, Math.round(stroke.L / sp)) : Math.max(2, Math.round(stroke.L / sp) + 1);
+  };
+
+  function distribute(N, lengths) {
+    const total = lengths.reduce((a, b) => a + b, 0) || 1;
+    const raw = lengths.map((l) => (N * l) / total);
+    const n = raw.map((v) => Math.max(1, Math.floor(v)));
+    let left = N - n.reduce((a, b) => a + b, 0);
+    const order = raw.map((v, i) => [v - Math.floor(v), i]).sort((a, b) => b[0] - a[0]);
+    for (let q = 0; left > 0 && order.length; q = (q + 1) % order.length, left--) n[order[q][1]]++;
+    return n;
+  }
+
+  const tmp = { x: 0, y: 0, ang: 0 };
+
+  /* Circles for one glyph, in skeleton units. opt: phase (flow, in steps), conveyor, spin (rad),
+     wavePhase, fixedN (total count, used by morphing), altDir. */
+  Coil.glyphCircles = function (prep, S, opt = {}) {
+    const out = [];
+    const r0 = S.weight;
+    const counts = opt.fixedN ? distribute(opt.fixedN, prep.strokes.map((s) => Math.max(1, s.L))) : null;
+    const seed = S.seed || 0;
+    prep.strokes.forEach((stroke, si) => {
+      const L = stroke.L;
+      const n = counts ? counts[si] : Coil.strokeCount(stroke, S);
+      const dir = opt.altDir && si % 2 ? -1 : 1;
+      const phase = (opt.phase || 0) * dir;
+      const emit = (s, fade, id) => {
+        Coil.sampleStroke(stroke, s, tmp);
+        let f = fade;
+        if (S.contrast) f *= 1 + S.contrast * (Math.abs(Math.sin(tmp.ang)) - 0.5);
+        if (S.taper && !stroke.closed && L > 1) {
+          const e = Math.min(s, L - s), ramp = Math.min(L * 0.5, 420);
+          f *= 1 - S.taper * (1 - smooth(clamp(e / ramp, 0, 1)));
+        }
+        if (S.wave) f *= 1 + S.wave * Math.sin(TAU * (s / 1000) * S.waveFreq + (opt.wavePhase || 0));
+        let x = tmp.x, y = tmp.y;
+        if (S.jitter) {
+          const h = si * 1009 + id;
+          x += (hash(h * 3.1 + seed) - 0.5) * S.jitter * r0 * 0.7;
+          y += (hash(h * 7.7 + seed * 2) - 0.5) * S.jitter * r0 * 0.7;
+          f *= 1 + (hash(h * 1.3 + seed * 5) - 0.5) * S.jitter * 0.9;
+        }
+        const r = r0 * f;
+        if (r < 0.5) return;
+        const a = (S.gradFollow ? tmp.ang : 0) + S.gradAngle * DEG + TAU * S.twist * (L > 0 ? s / L : 0) + (opt.spin || 0);
+        const c = { x, y, r, a, s, si, t: L > 0 ? s / L : 0 };
+        if (stroke.closed) { c.k = id; c.n = n; }
+        out.push(c);
+      };
+      if (L < 1) { emit(0, 1, 0); return; }
+      if (stroke.closed) {
+        const step = L / n;
+        for (let i = 0; i < n; i++) emit((((i + phase) * step) % L + L) % L, 1, i);
+      } else if (!opt.conveyor) {
+        const step = n > 1 ? L / (n - 1) : 0;
+        for (let i = 0; i < n; i++) emit(n > 1 ? i * step : L / 2, 1, i);
+      } else {
+        const step = L / Math.max(1, n - 1);
+        const base = Math.floor(phase), fr = phase - base;
+        for (let i = -1; i < n; i++) {
+          const s = (i + fr) * step;
+          if (s < 0 || s > L) continue;
+          const fade = smooth(clamp(s / step, 0, 1)) * smooth(clamp((L - s) / step, 0, 1));
+          if (fade < 0.01) continue;
+          emit(s, fade, i - base);
+        }
+      }
+    });
+    return out;
+  };
+
+  Coil.orderCircles = function (list, S, salt) {
+    if (S.order === 'reverse') list.reverse();
+    else if (S.order === 'shuffle') {
+      let h = (S.seed || 1) * 7919 + salt * 104729;
+      for (let i = list.length - 1; i > 0; i--) {
+        h = (h * 16807 + 11) % 2147483647;
+        const j = h % (i + 1);
+        const t = list[i]; list[i] = list[j]; list[j] = t;
+      }
+    }
+    return list;
+  };
+
+  /* Closed loops drawn in painter's order show a seam: the last circle sits on top of the first.
+     Returns draw ops: circles, plus after each loop a clipped redraw of the circles around the seam
+     in cyclic order, so the loop reads as continuous. Circles must carry si/k/n (from glyphCircles). */
+  Coil.withSeams = function (list, S) {
+    if (S.order === 'shuffle') return list;
+    const loops = new Map();
+    list.forEach((c, pos) => {
+      if (c.n === undefined) return;
+      let e = loops.get(c.si);
+      if (!e) loops.set(c.si, (e = { n: c.n, pos: new Array(c.n), last: -1 }));
+      e.pos[c.k] = pos;
+      if (pos > e.last) e.last = pos;
+    });
+    if (!loops.size) return list;
+    const after = new Map();
+    for (const e of loops.values()) {
+      const n = e.n;
+      let ok = true;
+      for (let j = 0; j < n; j++) if (e.pos[j] === undefined) { ok = false; break; }
+      if (!ok) continue;
+      const c0 = list[e.pos[0]], cl = list[e.pos[n - 1]];
+      const sp = Math.max(1e-3, Math.hypot(c0.x - cl.x, c0.y - cl.y));
+      let rmax = 0;
+      for (const p of e.pos) if (list[p].r > rmax) rmax = list[p].r;
+      const R = rmax * 1.1;
+      const K = Math.ceil((rmax + R) / sp);
+      if (2 * K + 2 > n || K > 120) continue;
+      const idx = [];
+      if (S.order === 'reverse') { for (let j = K; j >= 0; j--) idx.push(j); for (let j = n - 1; j >= n - K; j--) idx.push(j); }
+      else { for (let j = n - K; j < n; j++) idx.push(j); for (let j = 0; j <= K; j++) idx.push(j); }
+      after.set(e.last, { seam: true, x: (c0.x + cl.x) / 2, y: (c0.y + cl.y) / 2, R, list: idx.map((j) => list[e.pos[j]]) });
+    }
+    if (!after.size) return list;
+    const ops = [];
+    list.forEach((c, pos) => { ops.push(c); if (after.has(pos)) ops.push(after.get(pos)); });
+    return ops;
+  };
+
+  Coil.hueFor = function (S, index, count, offset) {
+    return (S.hueDrift || 0) * (count > 1 ? index / (count - 1) : 0) + (offset || 0);
+  };
+
+  const stopCache = new Map();
+  Coil.stopsFor = function (S, hue) {
+    const h = Math.round(hue || 0);
+    const key = S.stops.map((s) => s.c + s.p).join() + '|' + h;
+    let v = stopCache.get(key);
+    if (!v) {
+      v = S.stops.slice().sort((a, b) => a.p - b.p).map((s) => ({ p: s.p, c: h ? Coil.hueRotate(s.c, h) : s.c }));
+      if (stopCache.size > 2000) stopCache.clear();
+      stopCache.set(key, v);
+    }
+    return v;
+  };
+
+  /* Static scene for the generator / exports: groups of circles in document pixels. */
+  Coil.buildScene = function (S, W, H, opt = {}) {
+    const lay = Coil.layout(S, W, H, opt);
+    const k = lay.k;
+    const groups = lay.items.map((it) => {
+      const cs = Coil.glyphCircles(it.prep, S, opt.circleOpt || {});
+      const circles = cs.map((c) => ({ x: it.tx + c.x * k, y: it.ty + c.y * k, r: c.r * k, a: c.a, si: c.si, k: c.k, n: c.n }));
+      Coil.orderCircles(circles, S, it.index);
+      return { circles, ops: Coil.withSeams(circles, S), hue: Coil.hueFor(S, it.index, lay.count, opt.hueOffset), key: it.key, index: it.index };
+    });
+    return { W, H, groups, layout: lay };
+  };
+
+  /* ---------------- canvas rendering ---------------- */
+  const makeCanvas = (w, h) => {
+    if (typeof document === 'undefined') return new OffscreenCanvas(w, h);
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    return c;
+  };
+  Coil.makeCanvas = makeCanvas;
+
+  const layers = {};
+  function layer(name, w, h) {
+    let c = layers[name];
+    if (!c) c = layers[name] = makeCanvas(w, h);
+    if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+    const ctx = c.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.shadowColor = 'transparent';
+    ctx.clearRect(0, 0, w, h);
+    return [c, ctx];
+  }
+
+  let noiseTile = null;
+  function noise() {
+    if (noiseTile) return noiseTile;
+    const N = 256, c = makeCanvas(N, N), ctx = c.getContext('2d');
+    const img = ctx.createImageData(N, N);
+    for (let i = 0; i < N * N; i++) {
+      const v = 128 + (Math.random() + Math.random() + Math.random() - 1.5) * 150;
+      img.data[i * 4] = img.data[i * 4 + 1] = img.data[i * 4 + 2] = clamp(v, 0, 255);
+      img.data[i * 4 + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    return (noiseTile = c);
+  }
+  const dotTiles = {};
+  function dots(color) {
+    if (dotTiles[color]) return dotTiles[color];
+    const N = 32, c = makeCanvas(N, N), ctx = c.getContext('2d');
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(N / 2, N / 2, N * 0.24, 0, TAU);
+    ctx.fill();
+    return (dotTiles[color] = c);
+  }
+
+  const spriteCache = new Map();
+  function sprite(S, stops, Rs) {
+    const key = stops.map((s) => s.c + s.p).join() + [S.style, S.opacity, S.outlineWidth, S.outlineColor, S.outlineOpacity, S.ringWidth, Rs].join('|');
+    let sp = spriteCache.get(key);
+    if (sp) return sp;
+    const lw = S.style === 'ring' ? S.ringWidth * Rs : S.outlineWidth * Rs;
+    const pad = Math.ceil(lw / 2 + 2);
+    const size = 2 * (Rs + pad);
+    const c = makeCanvas(size, size), ctx = c.getContext('2d');
+    const m = size / 2;
+    const g = ctx.createLinearGradient(m - Rs, m, m + Rs, m);
+    for (const s of stops) g.addColorStop(s.p, s.c);
+    ctx.beginPath();
+    ctx.arc(m, m, Rs, 0, TAU);
+    if (S.style === 'ring') {
+      ctx.globalAlpha = S.opacity; ctx.lineWidth = lw; ctx.strokeStyle = g; ctx.stroke();
+    } else {
+      ctx.globalAlpha = S.opacity; ctx.fillStyle = g; ctx.fill();
+      if (S.outlineWidth > 0 && S.outlineOpacity > 0) {
+        ctx.globalAlpha = S.outlineOpacity; ctx.lineWidth = lw; ctx.strokeStyle = S.outlineColor; ctx.stroke();
+      }
+    }
+    sp = { c, half: m, Rs };
+    if (spriteCache.size > 160) spriteCache.clear();
+    spriteCache.set(key, sp);
+    return sp;
+  }
+
+  function drawVector(ctx, scene, S, k) {
+    ctx.setTransform(k, 0, 0, k, 0, 0);
+    const ring = S.style === 'ring';
+    const outline = !ring && S.outlineWidth > 0 && S.outlineOpacity > 0;
+    for (const grp of scene.groups) {
+      const stops = Coil.stopsFor(S, grp.hue);
+      const one = (c) => {
+        if (c.r * k < 0.15) return;
+        const dx = Math.cos(c.a) * c.r, dy = Math.sin(c.a) * c.r;
+        const g = ctx.createLinearGradient(c.x - dx, c.y - dy, c.x + dx, c.y + dy);
+        for (const s of stops) g.addColorStop(s.p, s.c);
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, TAU);
+        ctx.globalAlpha = S.opacity * (c.alpha ?? 1);
+        if (ring) { ctx.lineWidth = S.ringWidth * c.r; ctx.strokeStyle = g; ctx.stroke(); }
+        else {
+          ctx.fillStyle = g; ctx.fill();
+          if (outline) { ctx.globalAlpha = S.outlineOpacity * (c.alpha ?? 1); ctx.lineWidth = S.outlineWidth * c.r; ctx.strokeStyle = S.outlineColor; ctx.stroke(); }
+        }
+      };
+      for (const op of grp.ops || grp.circles) {
+        if (!op.seam) { one(op); continue; }
+        ctx.save();
+        ctx.beginPath(); ctx.arc(op.x, op.y, op.R, 0, TAU); ctx.clip();
+        for (const c of op.list) one(c);
+        ctx.restore();
+      }
+    }
+  }
+
+  function drawSprites(ctx, scene, S, k) {
+    let maxR = 1;
+    for (const grp of scene.groups) for (const c of grp.circles) if (c.r * k > maxR) maxR = c.r * k;
+    const Rs = clamp(2 ** Math.ceil(Math.log2(maxR)), 16, 256);
+    for (const grp of scene.groups) {
+      const sp = sprite(S, Coil.stopsFor(S, grp.hue), Rs);
+      const one = (c) => {
+        const s = (c.r * k) / Rs;
+        if (s * Rs < 0.15) return;
+        const co = Math.cos(c.a) * s, si = Math.sin(c.a) * s;
+        ctx.setTransform(co, si, -si, co, c.x * k, c.y * k);
+        ctx.globalAlpha = c.alpha ?? 1;
+        ctx.drawImage(sp.c, -sp.half, -sp.half);
+      };
+      for (const op of grp.ops || grp.circles) {
+        if (!op.seam) { one(op); continue; }
+        ctx.save();
+        ctx.setTransform(k, 0, 0, k, 0, 0);
+        ctx.beginPath(); ctx.arc(op.x, op.y, op.R, 0, TAU); ctx.clip();
+        for (const c of op.list) one(c);
+        ctx.restore();
+      }
+    }
+  }
+
+  /* Render a scene onto a canvas. opt: { sprites, transparent, grainShift } */
+  Coil.renderScene = function (canvas, scene, S, opt = {}) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height, k = W / scene.W;
+    const transparent = opt.transparent ?? S.transparent;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, W, H);
+    if (!transparent) { ctx.fillStyle = S.bg; ctx.fillRect(0, 0, W, H); }
+
+    const [ink, ic] = layer('ink', W, H);
+    ic.globalCompositeOperation = S.blend || 'source-over';
+    if (opt.sprites) drawSprites(ic, scene, S, k);
+    else drawVector(ic, scene, S, k);
+    ic.setTransform(1, 0, 0, 1, 0, 0);
+    ic.globalAlpha = 1;
+
+    if (S.dots > 0) {
+      const pat = ic.createPattern(dots(S.outlineColor), 'repeat');
+      const spacing = 7 * S.dotSize * k;
+      pat.setTransform(new DOMMatrix().scale(spacing / 32).rotate(45));
+      ic.globalCompositeOperation = 'source-atop';
+      ic.globalAlpha = S.dots;
+      ic.fillStyle = pat;
+      ic.fillRect(0, 0, W, H);
+    }
+    const grainMatrix = () => {
+      const sh = opt.grainShift || [0, 0];
+      return new DOMMatrix().translate(sh[0] * W, sh[1] * H).scale(Math.max(0.5, k));
+    };
+    if (transparent && S.grain > 0) {
+      const [gc, gx] = layer('grain', W, H);
+      const pat = gx.createPattern(noise(), 'repeat');
+      pat.setTransform(grainMatrix());
+      gx.fillStyle = pat;
+      gx.fillRect(0, 0, W, H);
+      gx.globalCompositeOperation = 'destination-in';
+      gx.drawImage(ink, 0, 0);
+      ic.globalCompositeOperation = 'overlay';
+      ic.globalAlpha = S.grain;
+      ic.drawImage(gc, 0, 0);
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+    if (S.shadow > 0) {
+      ctx.shadowColor = Coil.rgba(S.outlineColor, 0.45);
+      ctx.shadowBlur = S.shadow * 70 * k;
+      ctx.shadowOffsetY = S.shadow * 26 * k;
+    }
+    ctx.drawImage(ink, 0, 0);
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    if (!transparent && S.grain > 0) {
+      const pat = ctx.createPattern(noise(), 'repeat');
+      pat.setTransform(grainMatrix());
+      ctx.globalCompositeOperation = 'overlay';
+      ctx.globalAlpha = S.grain;
+      ctx.fillStyle = pat;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.restore();
+  };
+
+  Coil.clearSprites = () => spriteCache.clear();
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Coil Type — SVG export. One shared gradient per colour set; each circle is rotated so the
+   bounding-box gradient points the same way as on the canvas. */
+(function (root) {
+  const Coil = (root.Coil = root.Coil || {});
+  const n2 = (v) => +(+v).toFixed(2);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+  Coil.gradientDef = function (id, stops) {
+    return `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="0">` +
+      stops.map((s) => `<stop offset="${n2(s.p)}" stop-color="${s.c}"/>`).join('') + '</linearGradient>';
+  };
+
+  Coil.circleTag = function (c, S, k = 1, flipY = false) {
+    const cx = n2(c.x * k), cy = n2((flipY ? -c.y : c.y) * k), r = n2(c.r * k);
+    // Flipping y for font space moves the centre but not the direction: SVG and canvas are both y-down.
+    let deg = (c.a * 180) / Math.PI;
+    deg = n2(((deg % 360) + 540) % 360 - 180);
+    const sw = S.style === 'ring' ? S.ringWidth * c.r * k : S.outlineWidth * c.r * k;
+    const swAttr = sw > 0.01 && (S.style === 'ring' || S.outlineOpacity > 0) ? ` stroke-width="${n2(sw)}"` : '';
+    const rot = deg ? ` transform="rotate(${deg} ${cx} ${cy})"` : '';
+    return `<circle cx="${cx}" cy="${cy}" r="${r}"${swAttr}${rot}/>`;
+  };
+
+  /* Circle markup for a list of draw ops; seams become clipped groups of repeated circles. */
+  Coil.opsMarkup = function (ops, S, k, flipY, newId, addClip) {
+    let out = '';
+    for (const op of ops) {
+      if (!op.seam) { if (op.r > 0.05) out += Coil.circleTag(op, S, k, flipY); continue; }
+      const cid = newId();
+      addClip(cid, op.x * k, (flipY ? -op.y : op.y) * k, op.R * k);
+      out += `<g clip-path="url(#${cid})">`;
+      for (const c of op.list) if (c.r > 0.05) out += Coil.circleTag(c, S, k, flipY);
+      out += '</g>';
+    }
+    return out;
+  };
+
+  Coil.groupAttrs = function (S, gradId) {
+    if (S.style === 'ring') return `fill="none" stroke="url(#${gradId})" stroke-opacity="${n2(S.opacity)}"`;
+    const outline = S.outlineWidth > 0 && S.outlineOpacity > 0;
+    return `fill="url(#${gradId})" fill-opacity="${n2(S.opacity)}"` +
+      (outline ? ` stroke="${S.outlineColor}" stroke-opacity="${n2(S.outlineOpacity)}"` : ' stroke="none"');
+  };
+
+  Coil.toSVG = function (S, W, H) {
+    const scene = Coil.buildScene(S, W, H);
+    const grads = new Map();
+    let defs = '';
+    const gradFor = (hue) => {
+      const stops = Coil.stopsFor(S, hue);
+      const key = stops.map((s) => s.c + s.p).join();
+      if (!grads.has(key)) {
+        const id = 'grad' + grads.size;
+        grads.set(key, id);
+        defs += Coil.gradientDef(id, stops);
+      }
+      return grads.get(key);
+    };
+    const blend = S.blend && S.blend !== 'source-over' ? S.blend : null;
+    let body = '', seamN = 0;
+    for (const g of scene.groups) {
+      const id = gradFor(g.hue);
+      body += `<g id="letter-${g.index + 1}-${encodeURIComponent(g.key)}" ${Coil.groupAttrs(S, id)}>`;
+      body += Coil.opsMarkup(g.ops || g.circles, S, 1, false, () => {
+        const cid = 'seam' + seamN++;
+        return cid;
+      }, (cid, x, y, R) => { defs += `<clipPath id="${cid}"><circle cx="${n2(x)}" cy="${n2(y)}" r="${n2(R)}"/></clipPath>`; });
+      body += '</g>';
+    }
+    if (S.shadow > 0) {
+      defs += `<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="${n2(S.shadow * 26)}" stdDeviation="${n2(S.shadow * 35)}" flood-color="${S.outlineColor}" flood-opacity="0.45"/></filter>`;
+    }
+    const grain = !S.transparent && S.grain > 0;
+    if (grain) {
+      defs += '<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>';
+    }
+    const style = blend ? `<style>#letters circle{mix-blend-mode:${blend}}</style>` : '';
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+<title>${esc(S.text.replace(/\n/g, ' '))} — Coil Type</title>
+<defs>${defs}</defs>${style}
+${S.transparent ? '' : `<rect id="background" width="${W}" height="${H}" fill="${S.bg}"/>`}
+<g id="letters"${blend ? ' style="isolation:isolate"' : ''}${S.shadow > 0 ? ' filter="url(#shadow)"' : ''}>${body}</g>
+${grain ? `<rect id="grain" width="${W}" height="${H}" filter="url(#grain)" opacity="${n2(S.grain * 0.55)}" style="mix-blend-mode:overlay"/>` : ''}
+</svg>`;
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Coil Type — TrueType font builder.
+   glyf outlines: the union of each glyph's circles (single colour fallback).
+   COLR v1 + CPAL: every circle as a transformed, gradient-filled layer (Chrome, Edge, Firefox).
+   SVG table: the same circles as OpenType-SVG (Safari, Firefox, Adobe apps). */
+(function (root) {
+  const Coil = (root.Coil = root.Coil || {});
+  const UPM = 1000, INK = 700, ASC = 860, DESC = -260;
+  const UNIT = 256; // radius of the shared unit disc used by COLR layers
+
+  /* ---------- binary writer ---------- */
+  class Wr {
+    constructor(n = 4096) { this.b = new Uint8Array(n); this.len = 0; }
+    need(n) {
+      if (this.len + n <= this.b.length) return;
+      let c = this.b.length * 2;
+      while (c < this.len + n) c *= 2;
+      const nb = new Uint8Array(c); nb.set(this.b.subarray(0, this.len)); this.b = nb;
+    }
+    u8(v) { this.need(1); this.b[this.len++] = v & 255; }
+    u16(v) { this.need(2); this.b[this.len++] = (v >> 8) & 255; this.b[this.len++] = v & 255; }
+    i16(v) { v = Math.round(v); this.u16(v < 0 ? v + 65536 : v); }
+    u24(v) { this.u8(v >>> 16); this.u8(v >>> 8); this.u8(v); }
+    u32(v) { this.u16((v >>> 16) & 0xffff); this.u16(v & 0xffff); }
+    f2(v) { this.i16(Math.max(-32768, Math.min(32767, Math.round(v * 16384)))); }
+    tag(s) { for (let i = 0; i < 4; i++) this.u8(s.charCodeAt(i)); }
+    bytes(a) { this.need(a.length); this.b.set(a, this.len); this.len += a.length; }
+    pad(n = 4) { while (this.len % n) this.u8(0); }
+    put24(at, v) { this.b[at] = (v >>> 16) & 255; this.b[at + 1] = (v >>> 8) & 255; this.b[at + 2] = v & 255; }
+    put32(at, v) { this.b[at] = (v >>> 24) & 255; this.b[at + 1] = (v >>> 16) & 255; this.b[at + 2] = (v >>> 8) & 255; this.b[at + 3] = v & 255; }
+    out() { return this.b.slice(0, this.len); }
+  }
+
+  /* ---------- outlines ---------- */
+  // Circle as 8 quadratic segments: on-curve points every 45°, controls at r / cos(22.5°).
+  function circleContour(cx, cy, r, clockwise) {
+    const pts = [], rc = r / Math.cos(Math.PI / 8), dir = clockwise ? -1 : 1;
+    for (let j = 0; j < 8; j++) {
+      const a = (dir * j * Math.PI) / 4, b = a + (dir * Math.PI) / 8;
+      pts.push({ x: Math.round(cx + r * Math.cos(a)), y: Math.round(cy + r * Math.sin(a)), on: true });
+      pts.push({ x: Math.round(cx + rc * Math.cos(b)), y: Math.round(cy + rc * Math.sin(b)), on: false });
+    }
+    return pts;
+  }
+
+  function encodeGlyph(contours) {
+    const w = new Wr(256);
+    if (!contours.length) return { data: new Uint8Array(0), bbox: null, points: 0 };
+    let xMin = Infinity, yMin = Infinity, xMax = -Infinity, yMax = -Infinity, total = 0;
+    for (const c of contours) for (const p of c) {
+      if (p.x < xMin) xMin = p.x; if (p.x > xMax) xMax = p.x;
+      if (p.y < yMin) yMin = p.y; if (p.y > yMax) yMax = p.y;
+      total++;
+    }
+    w.i16(contours.length); w.i16(xMin); w.i16(yMin); w.i16(xMax); w.i16(yMax);
+    let end = -1;
+    for (const c of contours) { end += c.length; w.u16(end); }
+    w.u16(0); // no instructions
+    const flags = [], xs = new Wr(total * 2), ys = new Wr(total * 2);
+    let px = 0, py = 0, first = true;
+    for (const c of contours) for (const p of c) {
+      let f = p.on ? 1 : 0;
+      const dx = p.x - px, dy = p.y - py;
+      if (dx === 0) f |= 0x10;
+      else if (Math.abs(dx) < 256) { f |= 0x02; if (dx > 0) f |= 0x10; xs.u8(Math.abs(dx)); }
+      else xs.i16(dx);
+      if (dy === 0) f |= 0x20;
+      else if (Math.abs(dy) < 256) { f |= 0x04; if (dy > 0) f |= 0x20; ys.u8(Math.abs(dy)); }
+      else ys.i16(dy);
+      if (first) { f |= 0x40; first = false; } // OVERLAP_SIMPLE
+      flags.push(f);
+      px = p.x; py = p.y;
+    }
+    for (const f of flags) w.u8(f);
+    w.bytes(xs.out()); w.bytes(ys.out());
+    w.pad(4);
+    return { data: w.out(), bbox: { xMin, yMin, xMax, yMax }, points: total, contours: contours.length };
+  }
+
+  function checksum(bytes) {
+    let sum = 0;
+    const n = bytes.length;
+    for (let i = 0; i < n; i += 4) {
+      const v = ((bytes[i] << 24) >>> 0) + ((bytes[i + 1] || 0) << 16) + ((bytes[i + 2] || 0) << 8) + (bytes[i + 3] || 0);
+      sum = (sum + v) >>> 0;
+    }
+    return sum;
+  }
+
+  const utf8 = (s) => (typeof TextEncoder !== 'undefined' ? new TextEncoder().encode(s) : Buffer.from(s, 'utf8'));
+  const n2 = (v) => +(+v).toFixed(1);
+
+  /* Characters in the font and their glyph keys. Lowercase maps to the capitals. */
+  function charMap() {
+    const keys = Object.keys(Coil.GLYPHS);
+    const map = new Map();
+    for (const k of keys) {
+      map.set(k.codePointAt(0), k);
+      const lower = k.toLowerCase();
+      if (lower !== k) map.set(lower.codePointAt(0), k);
+    }
+    return { keys, map };
+  }
+
+  /* Build the font. Returns { bytes: Uint8Array, glyphCount, layerCount } */
+  Coil.buildFont = function (S, familyName) {
+    const family = (String(familyName || 'Coil').replace(/[^A-Za-z0-9 ]+/g, '').replace(/\s+/g, ' ').trim() || 'Coil').slice(0, 28);
+    const psName = family.replace(/ /g, '') + '-Regular';
+    const r0 = S.weight;
+    const k = INK / (1000 + 2 * r0);
+    const sb = Math.round(28 + (S.tracking * k) / 2);
+    const corner = S.corners * 200;
+    const ring = S.style === 'ring';
+    const ow = !ring && S.outlineWidth > 0 && S.outlineOpacity > 0 ? S.outlineWidth : 0;
+    const rw = S.ringWidth;
+    const { keys, map } = charMap();
+
+    // Glyph order: .notdef, space, base glyphs, then the COLR layer shapes.
+    const glyphs = [];
+    const notdef = [
+      [{ x: 60, y: 0, on: true }, { x: 60, y: 700, on: true }, { x: 440, y: 700, on: true }, { x: 440, y: 0, on: true }],
+      [{ x: 110, y: 50, on: true }, { x: 390, y: 50, on: true }, { x: 390, y: 650, on: true }, { x: 110, y: 650, on: true }],
+    ];
+    glyphs.push({ name: '.notdef', contours: notdef, adv: 500 });
+    glyphs.push({ name: 'space', contours: [], adv: Math.max(0, Math.round((Coil.SPACE_WIDTH * S.width + S.tracking) * k)) });
+
+    const colorSets = []; // stop lists (with hue) used by the layers
+    const setIndex = new Map();
+    const glyphIdOf = new Map();
+    keys.forEach((key, i) => {
+      const prep = Coil.prepGlyph(key, corner, S.width, S.slant);
+      const cs = Coil.orderCircles(Coil.glyphCircles(prep, S), S, i);
+      const circles = cs.map((c) => ({
+        x: (c.x - prep.xMin + r0) * k + sb,
+        y: (1000 + r0 - c.y) * k,
+        r: c.r * k,
+        a: c.a, si: c.si, k: c.k, n: c.n,
+      })).filter((c) => c.r >= 1);
+      const ops = Coil.withSeams(circles, S);
+      const stops = Coil.stopsFor(S, Coil.hueFor(S, i, keys.length));
+      const skey = stops.map((s) => s.c + s.p).join();
+      if (!setIndex.has(skey)) { setIndex.set(skey, colorSets.length); colorSets.push(stops); }
+      const contours = [];
+      for (const c of circles) {
+        if (ring) {
+          contours.push(circleContour(c.x, c.y, c.r * (1 + rw / 2), true));
+          if (rw < 1.98) contours.push(circleContour(c.x, c.y, c.r * (1 - rw / 2), false));
+        } else contours.push(circleContour(c.x, c.y, c.r * (1 + ow / 2), true));
+      }
+      glyphIdOf.set(key, glyphs.length);
+      glyphs.push({
+        name: key, contours, circles, ops, set: setIndex.get(skey),
+        adv: Math.max(0, Math.round((prep.width + 2 * r0) * k + 2 * sb)),
+      });
+    });
+    const baseEnd = glyphs.length;
+    const discGid = glyphs.length;
+    glyphs.push({ name: 'layer.disc', contours: ring ? [circleContour(0, 0, UNIT * (1 + rw / 2), true), circleContour(0, 0, UNIT * Math.max(0.01, 1 - rw / 2), false)] : [circleContour(0, 0, UNIT, true)], adv: 0 });
+    const outlineGid = glyphs.length;
+    if (ow) glyphs.push({ name: 'layer.outline', contours: [circleContour(0, 0, UNIT * (1 + ow / 2), true), circleContour(0, 0, UNIT * (1 - ow / 2), false)], adv: 0 });
+    // Clip shapes for loop seams (see Coil.withSeams)
+    for (let gid = 2; gid < baseEnd; gid++) {
+      for (const op of glyphs[gid].ops) {
+        if (!op.seam) continue;
+        op.clipGid = glyphs.length;
+        glyphs.push({ name: 'layer.seam', contours: [circleContour(op.x, op.y, op.R, true)], adv: 0 });
+      }
+    }
+
+    // Encode outlines
+    let maxPoints = 0, maxContours = 0;
+    let gx0 = Infinity, gy0 = Infinity, gx1 = -Infinity, gy1 = -Infinity;
+    for (const g of glyphs) {
+      const enc = encodeGlyph(g.contours);
+      g.data = enc.data; g.bbox = enc.bbox;
+      if (enc.bbox) {
+        maxPoints = Math.max(maxPoints, enc.points); maxContours = Math.max(maxContours, enc.contours);
+        gx0 = Math.min(gx0, enc.bbox.xMin); gy0 = Math.min(gy0, enc.bbox.yMin);
+        gx1 = Math.max(gx1, enc.bbox.xMax); gy1 = Math.max(gy1, enc.bbox.yMax);
+      }
+    }
+    const numGlyphs = glyphs.length;
+    const tables = {};
+
+    /* glyf + loca */
+    {
+      const gw = new Wr(1 << 16), lw = new Wr((numGlyphs + 1) * 4);
+      for (const g of glyphs) { lw.u32(gw.len); gw.bytes(g.data); }
+      lw.u32(gw.len);
+      tables.glyf = gw.out(); tables.loca = lw.out();
+    }
+
+    /* hmtx */
+    let advMax = 0, minLsb = Infinity, minRsb = Infinity, maxExtent = -Infinity, advSum = 0, advN = 0;
+    {
+      const w = new Wr(numGlyphs * 4);
+      for (const g of glyphs) {
+        const lsb = g.bbox ? g.bbox.xMin : 0;
+        w.u16(g.adv); w.i16(lsb);
+        advMax = Math.max(advMax, g.adv);
+        if (g.adv) { advSum += g.adv; advN++; }
+        if (g.bbox) {
+          minLsb = Math.min(minLsb, lsb);
+          minRsb = Math.min(minRsb, g.adv - g.bbox.xMax);
+          maxExtent = Math.max(maxExtent, g.bbox.xMax);
+        }
+      }
+      tables.hmtx = w.out();
+    }
+    const winAscent = Math.max(ASC, Math.ceil(gy1));
+    const winDescent = Math.max(-DESC, Math.ceil(-gy0));
+
+    /* head */
+    const now = Math.floor(Date.now() / 1000) + 2082844800;
+    {
+      const w = new Wr(54);
+      w.u32(0x00010000); w.u32(0x00010000); w.u32(0); w.u32(0x5f0f3cf5);
+      w.u16(0x000b); w.u16(UPM);
+      w.u32(Math.floor(now / 4294967296)); w.u32(now >>> 0);
+      w.u32(Math.floor(now / 4294967296)); w.u32(now >>> 0);
+      w.i16(gx0); w.i16(gy0); w.i16(gx1); w.i16(gy1);
+      w.u16(0); w.u16(8); w.i16(2); w.i16(1); w.i16(0);
+      tables.head = w.out();
+    }
+
+    /* hhea */
+    {
+      const w = new Wr(36);
+      w.u32(0x00010000); w.i16(ASC); w.i16(DESC); w.i16(0);
+      w.u16(advMax); w.i16(minLsb); w.i16(minRsb); w.i16(maxExtent);
+      w.i16(1); w.i16(0); w.i16(0);
+      w.i16(0); w.i16(0); w.i16(0); w.i16(0);
+      w.i16(0); w.u16(numGlyphs);
+      tables.hhea = w.out();
+    }
+
+    /* maxp */
+    {
+      const w = new Wr(32);
+      w.u32(0x00010000); w.u16(numGlyphs); w.u16(maxPoints); w.u16(maxContours);
+      w.u16(0); w.u16(0); w.u16(2); w.u16(0); w.u16(0); w.u16(0); w.u16(0); w.u16(0); w.u16(0); w.u16(0); w.u16(0);
+      tables.maxp = w.out();
+    }
+
+    /* cmap (format 4) */
+    const codes = [...map.keys()].sort((a, b) => a - b);
+    {
+      const pairs = [[32, 1]].concat(codes.map((c) => [c, glyphIdOf.get(map.get(c))])).sort((a, b) => a[0] - b[0]);
+      const segs = [];
+      for (const [c, g] of pairs) {
+        const last = segs[segs.length - 1];
+        if (last && c === last.end + 1 && g === last.gid + (c - last.start)) last.end = c;
+        else segs.push({ start: c, end: c, gid: g });
+      }
+      segs.push({ start: 0xffff, end: 0xffff, gid: 1 - 0xffff + 65536, last: true });
+      const n = segs.length, sr = 2 * 2 ** Math.floor(Math.log2(n));
+      const sub = new Wr();
+      sub.u16(4); sub.u16(16 + 8 * n); sub.u16(0); sub.u16(2 * n); sub.u16(sr); sub.u16(Math.floor(Math.log2(n))); sub.u16(2 * n - sr);
+      for (const s of segs) sub.u16(s.end);
+      sub.u16(0);
+      for (const s of segs) sub.u16(s.start);
+      for (const s of segs) sub.u16(s.last ? 1 : (s.gid - s.start + 65536) % 65536);
+      for (let i = 0; i < n; i++) sub.u16(0);
+      const w = new Wr();
+      w.u16(0); w.u16(2);
+      w.u16(0); w.u16(3); w.u32(20);
+      w.u16(3); w.u16(1); w.u32(20);
+      w.bytes(sub.out());
+      tables.cmap = w.out();
+    }
+
+    /* OS/2 v4 */
+    {
+      const w = new Wr(96);
+      const hasHeart = map.has(0x2665);
+      w.u16(4); w.i16(Math.round(advSum / Math.max(1, advN))); w.u16(400); w.u16(5); w.u16(0);
+      w.i16(650); w.i16(600); w.i16(0); w.i16(75); w.i16(650); w.i16(600); w.i16(0); w.i16(350);
+      w.i16(50); w.i16(300); w.i16(0);
+      for (let i = 0; i < 10; i++) w.u8(0);
+      w.u32(1); w.u32(hasHeart ? 1 << 14 : 0); w.u32(0); w.u32(0);
+      w.tag('COIL');
+      w.u16(0x40 | 0x80);
+      w.u16(32); w.u16(Math.min(0xffff, codes[codes.length - 1]));
+      w.i16(ASC); w.i16(DESC); w.i16(0);
+      w.u16(winAscent); w.u16(winDescent);
+      w.u32(1); w.u32(0);
+      w.i16(INK); w.i16(INK); w.u16(0); w.u16(32); w.u16(0);
+      tables['OS/2'] = w.out();
+    }
+
+    /* name */
+    {
+      const ver = 'Version 1.000';
+      const recs = [
+        [0, 'Made with Coil Type'], [1, family], [2, 'Regular'], [3, `${psName};${new Date().toISOString().slice(0, 10)}`],
+        [4, family], [5, ver], [6, psName],
+      ];
+      const strings = [];
+      const entries = [];
+      let off = 0;
+      const add = (pid, eid, lid, nid, bytes) => { entries.push([pid, eid, lid, nid, bytes.length, off]); strings.push(bytes); off += bytes.length; };
+      for (const [nid, s] of recs) add(1, 0, 0, nid, Uint8Array.from([...s].map((ch) => (ch.charCodeAt(0) < 128 ? ch.charCodeAt(0) : 63))));
+      for (const [nid, s] of recs) {
+        const b = new Uint8Array(s.length * 2);
+        for (let i = 0; i < s.length; i++) { b[i * 2] = s.charCodeAt(i) >> 8; b[i * 2 + 1] = s.charCodeAt(i) & 255; }
+        add(3, 1, 0x409, nid, b);
+      }
+      const w = new Wr();
+      w.u16(0); w.u16(entries.length); w.u16(6 + 12 * entries.length);
+      for (const e of entries) { w.u16(e[0]); w.u16(e[1]); w.u16(e[2]); w.u16(e[3]); w.u16(e[4]); w.u16(e[5]); }
+      for (const s of strings) w.bytes(s);
+      tables.name = w.out();
+    }
+
+    /* post v3 */
+    {
+      const w = new Wr(32);
+      const ang = -Math.atan(S.slant) * (180 / Math.PI);
+      w.u32(0x00030000); w.u32(Math.round(ang * 65536) >>> 0);
+      w.i16(-120); w.i16(50); w.u32(0); w.u32(0); w.u32(0); w.u32(0); w.u32(0);
+      tables.post = w.out();
+    }
+
+    /* kern (format 0): the same pair kerning as the preview, manual pairs plus optical when it is on */
+    {
+      const pairs = [];
+      for (const a of keys) for (const b of keys) {
+        const v = Math.round(Coil.kernPair(a, b, S) * k);
+        if (v) pairs.push([glyphIdOf.get(a), glyphIdOf.get(b), v]);
+      }
+      if (pairs.length) {
+        pairs.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+        const n = Math.min(pairs.length, 10900);
+        const es = Math.floor(Math.log2(n)), sr = 6 * 2 ** es;
+        const w = new Wr(18 + 6 * n);
+        w.u16(0); w.u16(1);
+        w.u16(0); w.u16(14 + 6 * n); w.u16(0x0001);
+        w.u16(n); w.u16(sr); w.u16(es); w.u16(n * 6 - sr);
+        for (let i = 0; i < n; i++) { w.u16(pairs[i][0]); w.u16(pairs[i][1]); w.i16(pairs[i][2]); }
+        tables.kern = w.out();
+        tables._kernPairs = n;
+      }
+    }
+
+    /* CPAL */
+    const palette = [];
+    const palIndex = (hex) => {
+      let i = palette.indexOf(hex);
+      if (i < 0) { i = palette.length; palette.push(hex); }
+      return i;
+    };
+    const setStops = colorSets.map((stops) => stops.map((s) => ({ p: s.p, i: palIndex(s.c) })));
+    const outlinePal = palIndex(S.outlineColor);
+
+    /* COLR v1 */
+    {
+      const bases = glyphs.slice(2, baseEnd).map((g, j) => ({ gid: j + 2, g }));
+      const layerPaints = []; // absolute offsets of paints in the LayerList, filled after writing
+      const layerRefs = []; // per layer: id string of the paint
+      const P = new Wr(1 << 16); // paint region, offsets relative to its start
+      const at = {}; // paint id -> offset within P
+      const patches = []; // { pos, from, id }
+      const topOf = new Map();
+      let layerCount = 0;
+
+      // plan the layer list
+      const plan = bases.map(({ gid, g }) => {
+        const leaves = [], idOf = new Map();
+        g.circles.forEach((c, ci) => idOf.set(c, ci));
+        for (const op of g.ops) {
+          if (op.seam) {
+            const dup = [];
+            for (const c of op.list) {
+              const ci = idOf.get(c);
+              if (ci === undefined) continue;
+              dup.push(`leaf:${gid}:f${ci}`);
+              if (ow) dup.push(`leaf:${gid}:o${ci}`);
+            }
+            if (dup.length && dup.length <= 255) leaves.push({ kind: 'seam', op, dup, id: `leaf:${gid}:s${leaves.length}` });
+            continue;
+          }
+          const ci = idOf.get(op);
+          leaves.push({ kind: 'fill', c: op, id: `leaf:${gid}:f${ci}` });
+          if (ow) leaves.push({ kind: 'outline', c: op, id: `leaf:${gid}:o${ci}` });
+        }
+        return { gid, g, leaves };
+      });
+      // layer index assignments: top-level layers, then chunk nodes, then the seam repeats
+      for (const p of plan) {
+        p.first = layerRefs.length;
+        p.leaves.forEach((lf) => layerRefs.push(lf.id));
+        if (p.leaves.length > 255) {
+          p.chunks = Math.ceil(p.leaves.length / 255);
+          p.chunkFirst = layerRefs.length;
+          for (let q = 0; q < p.chunks; q++) layerRefs.push(`chunk:${p.gid}:${q}`);
+        }
+        for (const lf of p.leaves) if (lf.kind === 'seam') { lf.dupFirst = layerRefs.length; layerRefs.push(...lf.dup); }
+      }
+      const writeColrLayers = (id, num, first) => { at[id] = P.len; P.u8(1); P.u8(num); P.u32(first); };
+      // tops and chunks
+      for (const p of plan) {
+        if (!p.leaves.length) continue;
+        if (p.chunks) {
+          writeColrLayers(`top:${p.gid}`, p.chunks, p.chunkFirst);
+          for (let q = 0; q < p.chunks; q++) writeColrLayers(`chunk:${p.gid}:${q}`, Math.min(255, p.leaves.length - q * 255), p.first + q * 255);
+        } else writeColrLayers(`top:${p.gid}`, p.leaves.length, p.first);
+        topOf.set(p.gid, `top:${p.gid}`);
+      }
+      // leaves
+      const ref24 = (id) => { const from = P.len; P.u8(0); P.u24(0); patches.push({ pos: from + 1, from, id }); };
+      for (const p of plan) {
+        p.leaves.forEach((lf) => {
+          at[lf.id] = P.len;
+          if (lf.kind === 'seam') {
+            // PaintGlyph(clip disc) -> PaintColrLayers(repeated circles), so they only show inside the clip
+            P.u8(10); P.u24(6); P.u16(lf.op.clipGid);
+            P.u8(1); P.u8(lf.dup.length); P.u32(lf.dupFirst);
+            return;
+          }
+          const c = lf.c;
+          // PaintTranslate(14) -> child right after (8 bytes)
+          P.u8(14); P.u24(8); P.i16(c.x); P.i16(c.y);
+          let deg = (-c.a * 180) / Math.PI;
+          deg = ((deg % 360) + 540) % 360 - 180;
+          const scale = Math.min(1.99, c.r / UNIT);
+          if (lf.kind === 'fill') {
+            P.u8(24); P.u24(6); P.f2(deg / 180); // PaintRotate
+            const s0 = P.len; P.u8(20); P.u24(0); P.f2(scale); // PaintScaleUniform -> shared
+            patches.push({ pos: s0 + 1, from: s0, id: `fill:${p.g.set}` });
+          } else {
+            const s0 = P.len; P.u8(20); P.u24(0); P.f2(scale);
+            patches.push({ pos: s0 + 1, from: s0, id: 'outline' });
+          }
+          layerCount++;
+        });
+      }
+      // shared: PaintGlyph(disc) -> PaintLinearGradient -> ColorLine, one per colour set
+      setStops.forEach((stops, si) => {
+        at[`fill:${si}`] = P.len;
+        P.u8(10); P.u24(6); P.u16(discGid);
+        P.u8(4); P.u24(16); P.i16(-UNIT); P.i16(0); P.i16(UNIT); P.i16(0); P.i16(-UNIT); P.i16(UNIT);
+        P.u8(0); P.u16(stops.length);
+        for (const s of stops) { P.f2(s.p); P.u16(s.i); P.f2(S.opacity); }
+      });
+      if (ow) {
+        at.outline = P.len;
+        P.u8(10); P.u24(6); P.u16(outlineGid);
+        P.u8(2); P.u16(outlinePal); P.f2(S.outlineOpacity);
+      }
+      for (const pt of patches) {
+        const d = at[pt.id] - pt.from;
+        if (!(d > 0 && d < 1 << 24)) throw new Error('COLR offset out of range');
+        P.put24(pt.pos, d);
+      }
+
+      // assemble COLR
+      const nBase = plan.filter((p) => p.leaves.length).length;
+      const hdr = 34;
+      const baseListOff = hdr;
+      const baseListLen = 4 + 6 * nBase;
+      const layerListOff = baseListOff + baseListLen;
+      const layerListLen = 4 + 4 * layerRefs.length;
+      const clipListOff = layerListOff + layerListLen;
+      const clipLen = 5 + 7 * nBase + 9 * nBase;
+      const paintOff = clipListOff + clipLen;
+      const w = new Wr(paintOff + P.len);
+      w.u16(1); w.u16(0); w.u32(0); w.u32(0); w.u16(0);
+      w.u32(baseListOff); w.u32(layerListOff); w.u32(clipListOff); w.u32(0); w.u32(0);
+      // BaseGlyphList
+      w.u32(nBase);
+      for (const p of plan) if (p.leaves.length) { w.u16(p.gid); w.u32(paintOff + at[topOf.get(p.gid)] - baseListOff); }
+      // LayerList
+      w.u32(layerRefs.length);
+      for (const id of layerRefs) w.u32(paintOff + at[id] - layerListOff);
+      // ClipList
+      w.u8(1); w.u32(nBase);
+      const boxStart = 5 + 7 * nBase;
+      let bi = 0;
+      for (const p of plan) if (p.leaves.length) { w.u16(p.gid); w.u16(p.gid); w.u24(boxStart + 9 * bi); bi++; }
+      for (const p of plan) if (p.leaves.length) {
+        const b = p.g.bbox;
+        w.u8(1); w.i16(b.xMin - 2); w.i16(b.yMin - 2); w.i16(b.xMax + 2); w.i16(b.yMax + 2);
+      }
+      if (w.len !== paintOff) throw new Error('COLR layout mismatch');
+      w.bytes(P.out());
+      tables.COLR = w.out();
+      tables._layers = layerCount;
+    }
+
+    {
+      const w = new Wr();
+      w.u16(0); w.u16(palette.length); w.u16(1); w.u16(palette.length); w.u32(14); w.u16(0);
+      for (const hex of palette) { const [r, g, b] = Coil.hexToRgb(hex); w.u8(b); w.u8(g); w.u8(r); w.u8(255); }
+      tables.CPAL = w.out();
+    }
+
+    /* SVG (OpenType-SVG) */
+    {
+      const docs = [];
+      for (let gid = 2; gid < baseEnd; gid++) {
+        const g = glyphs[gid];
+        if (!g.circles.length) continue;
+        const stops = colorSets[g.set];
+        let clips = '', seamN = 0;
+        const body = Coil.opsMarkup(g.ops, S, 1, true, () => 's' + seamN++, (cid, x, y, R) => {
+          clips += `<clipPath id="${cid}"><circle cx="${n2(x)}" cy="${n2(y)}" r="${n2(R)}"/></clipPath>`;
+        });
+        const doc = `<svg xmlns="http://www.w3.org/2000/svg"><defs>${Coil.gradientDef('g', stops)}${clips}</defs><g id="glyph${gid}" ${Coil.groupAttrs(S, 'g')}>${body}</g></svg>`;
+        docs.push({ gid, bytes: utf8(doc) });
+      }
+      const w = new Wr();
+      w.u16(0); w.u32(10); w.u32(0);
+      const listStart = w.len;
+      w.u16(docs.length);
+      let off = 2 + 12 * docs.length;
+      for (const d of docs) { w.u16(d.gid); w.u16(d.gid); w.u32(off); w.u32(d.bytes.length); off += d.bytes.length; }
+      for (const d of docs) w.bytes(d.bytes);
+      if (listStart !== 10) throw new Error('SVG header size');
+      tables['SVG '] = w.out();
+    }
+
+    /* assemble sfnt */
+    const layerTotal = tables._layers, kernPairs = tables._kernPairs || 0;
+    delete tables._layers;
+    delete tables._kernPairs;
+    const tags = Object.keys(tables).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    const nt = tags.length;
+    const sr = 16 * 2 ** Math.floor(Math.log2(nt));
+    let size = 12 + 16 * nt;
+    const offsets = {};
+    for (const t of tags) { offsets[t] = size; size += Math.ceil(tables[t].length / 4) * 4; }
+    const out = new Wr(size);
+    out.u32(0x00010000); out.u16(nt); out.u16(sr); out.u16(Math.floor(Math.log2(nt))); out.u16(nt * 16 - sr);
+    for (const t of tags) { out.tag(t); out.u32(checksum(tables[t])); out.u32(offsets[t]); out.u32(tables[t].length); }
+    for (const t of tags) { out.bytes(tables[t]); out.pad(4); }
+    const bytes = out.out();
+    const adj = (0xb1b0afba - checksum(bytes)) >>> 0;
+    const ho = offsets.head + 8;
+    bytes[ho] = adj >>> 24; bytes[ho + 1] = (adj >>> 16) & 255; bytes[ho + 2] = (adj >>> 8) & 255; bytes[ho + 3] = adj & 255;
+    return { bytes, glyphCount: numGlyphs, layerCount: layerTotal, kernPairs, family, characters: codes.length + 1 };
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Coil Type — animation modes: slinky flow, morphing, mouse play, bounce & wave. */
+(function (root) {
+  const Coil = root.Coil;
+  const TAU = Math.PI * 2;
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const easeOutBounce = (x) => {
+    const n1 = 7.5625, d1 = 2.75;
+    if (x < 1 / d1) return n1 * x * x;
+    if (x < 2 / d1) return n1 * (x -= 1.5 / d1) * x + 0.75;
+    if (x < 2.5 / d1) return n1 * (x -= 2.25 / d1) * x + 0.9375;
+    return n1 * (x -= 2.625 / d1) * x + 0.984375;
+  };
+  const wrapAngle = (d) => ((d + Math.PI) % TAU + TAU) % TAU - Math.PI;
+
+  Coil.ANIM_DEFAULTS = {
+    mode: 'slinky', speed: 1, liveGrain: false,
+    flow: 2.5, spin: 0.12, ripple: 0.18, rippleSpeed: 1.2, altDir: true, hueSpeed: 0,
+    morphBy: 'letter', hold: 0.7, trans: 1.4, stagger: 0.6, swoop: 0.45, pump: 0.35,
+    effect: 'repel', reach: 0.2, force: 0.55, bulge: 0.8, spring: 0.5, autopilot: true,
+    height: 0.5, bounceSpeed: 1.1, bounceStagger: 0.12, squash: 0.6, wobble: 0.4, bounceHue: 40,
+    recLen: 6,
+  };
+
+  /* Split a circle list into consecutive groups of (rounded) equal hue, keeping draw order. */
+  function groupByHue(list) {
+    const groups = [];
+    let cur = null;
+    for (const c of list) {
+      const h = Math.round(c.hue / 6) * 6;
+      if (!cur || cur.hue !== h) { cur = { hue: h, circles: [] }; groups.push(cur); }
+      cur.circles.push(c);
+    }
+    return groups;
+  }
+
+  class Animator {
+    constructor(o) {
+      this.canvas = o.canvas;
+      this.getS = o.getS;
+      this.getA = o.getA;
+      this.fit = o.fit; // (W, H) => css width of the artboard
+      this.onInfo = o.onInfo || (() => {});
+      this.t = 0;
+      this.playing = true;
+      this.running = false;
+      this.dirty = true;
+      this.recording = false;
+      this.ptr = { x: 0, y: 0, last: -1e9, inside: false };
+      this.waves = [];
+      this.fps = 60;
+      this.loop = this.loop.bind(this);
+      const c = this.canvas;
+      const toDoc = (e) => {
+        const r = c.getBoundingClientRect();
+        return [((e.clientX - r.left) / r.width) * this.W, ((e.clientY - r.top) / r.height) * this.H];
+      };
+      c.addEventListener('pointermove', (e) => {
+        [this.ptr.x, this.ptr.y] = toDoc(e);
+        this.ptr.last = this.t; this.ptr.inside = true;
+      });
+      c.addEventListener('pointerdown', (e) => {
+        [this.ptr.x, this.ptr.y] = toDoc(e);
+        this.ptr.last = this.t; this.ptr.inside = true;
+        this.waves.push({ x: this.ptr.x, y: this.ptr.y, t0: this.t });
+        if (this.getA().mode === 'mouse' && !this.playing) this.play(true);
+      });
+      c.addEventListener('pointerleave', () => { this.ptr.inside = false; });
+    }
+
+    start() {
+      if (this.running) return;
+      this.running = true;
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.loop);
+    }
+    stop() { this.running = false; cancelAnimationFrame(this.raf); }
+    invalidate() { this.dirty = true; }
+    restart() { this.t = 0; this.waves = []; this.dirty = true; }
+    play(on) { this.playing = on; this.dirty = true; }
+
+    loop(now) {
+      if (!this.running) return;
+      this.raf = requestAnimationFrame(this.loop);
+      const dt = Math.min(0.05, Math.max(0, (now - this.last) / 1000));
+      this.last = now;
+      if (dt > 0) this.fps = this.fps * 0.92 + (1 / dt) * 0.08;
+      if (!this.playing && !this.dirty) return;
+      this.step(this.playing ? dt : 0);
+    }
+
+    step(dt) {
+      const S = this.getS(), A = this.getA();
+      const { W, H } = Coil.docSize(S, true);
+      if (this.dirty || W !== this.W || H !== this.H || A.mode !== this.mode || A.morphBy !== this.morphBy) {
+        this.W = W; this.H = H; this.mode = A.mode; this.morphBy = A.morphBy;
+        this.build(S, A);
+      }
+      this.dirty = false;
+      const sdt = dt * A.speed;
+      this.t += sdt;
+      this.sizeCanvas(W, H);
+      const scene = this[A.mode + 'Frame'](S, A, sdt);
+      Coil.renderScene(this.canvas, scene, S, {
+        sprites: true,
+        grainShift: A.liveGrain && this.playing ? [Math.random(), Math.random()] : null,
+      });
+      const n = scene.groups.reduce((a, g) => a + g.circles.length, 0);
+      this.onInfo(`${this.canvas.width} × ${this.canvas.height} px · ${n} circles · ${Math.round(this.fps)} fps`);
+    }
+
+    sizeCanvas(W, H) {
+      const cssW = this.fit(W, H);
+      let pw;
+      if (this.recording) pw = Math.min(W, Math.round((W * 1920) / Math.max(W, H)));
+      else pw = Math.round(Math.min(W, cssW * Math.min(2, window.devicePixelRatio || 1)));
+      const ph = Math.round((pw * H) / W);
+      if (this.canvas.width !== pw || this.canvas.height !== ph) { this.canvas.width = pw; this.canvas.height = ph; }
+    }
+
+    build(S, A) {
+      const W = this.W, H = this.H;
+      if (A.mode === 'slinky' || A.mode === 'bounce') {
+        this.lay = Coil.layout(S, W, H);
+        if (A.mode === 'bounce') {
+          const k = this.lay.k, r = S.weight;
+          this.glyphs = this.lay.items.map((it) => ({
+            it,
+            base: Coil.orderCircles(Coil.glyphCircles(it.prep, S).map((c) => ({ x: it.tx + c.x * k, y: it.ty + c.y * k, r: c.r * k, a: c.a, si: c.si, k: c.k, n: c.n })), S, it.index),
+            cx: it.tx + ((it.prep.xMin + it.prep.xMax) / 2) * k,
+            cy: it.ty + (1000 + r) * k,
+          }));
+        }
+      } else if (A.mode === 'morph') this.buildMorph(S, A);
+      else if (A.mode === 'mouse') this.buildMouse(S);
+    }
+
+    /* ---------- slinky ---------- */
+    slinkyFrame(S, A) {
+      const lay = this.lay, k = lay.k, t = this.t;
+      const S2 = A.ripple ? Object.assign({}, S, { wave: S.wave + A.ripple, waveFreq: S.wave ? S.waveFreq : 2.2 }) : S;
+      const opt = { phase: t * A.flow, conveyor: true, spin: t * A.spin * TAU, wavePhase: -t * A.rippleSpeed * TAU, altDir: A.altDir };
+      const groups = lay.items.map((it) => {
+        const circles = Coil.glyphCircles(it.prep, S2, opt).map((c) => ({ x: it.tx + c.x * k, y: it.ty + c.y * k, r: c.r * k, a: c.a, si: c.si, k: c.k, n: c.n }));
+        Coil.orderCircles(circles, S, it.index);
+        return { circles, ops: Coil.withSeams(circles, S), hue: Coil.hueFor(S, it.index, lay.count, t * A.hueSpeed) };
+      });
+      return { W: this.W, H: this.H, groups };
+    }
+
+    /* ---------- morph ---------- */
+    buildMorph(S, A) {
+      const W = this.W, H = this.H;
+      const visible = (txt) => [...txt].some((ch) => { const g = Coil.glyphKey(ch); return g && g !== ' '; });
+      let seq = [];
+      if (A.morphBy === 'line') seq = S.text.split('\n').filter(visible);
+      else for (const ch of S.text) { const g = Coil.glyphKey(ch); if (g && g !== ' ') seq.push(ch); }
+      if (!seq.length) seq = ['O'];
+      const entries = seq.map((text) => {
+        const lay = Coil.layout(S, W, H, { text });
+        const natural = lay.items.reduce((a, it) => a + Coil.glyphCircles(it.prep, S).length, 0);
+        return { lay, natural };
+      });
+      const N = clamp(Math.max(...entries.map((e) => e.natural)), 24, 1200);
+      this.morphN = N;
+      this.sets = entries.map(({ lay }) => {
+        const k = lay.k;
+        const total = lay.items.reduce((a, it) => a + it.prep.total, 0) || 1;
+        const out = [];
+        let left = N;
+        lay.items.forEach((it, j) => {
+          const n = j === lay.items.length - 1 ? left : Math.max(1, Math.round((N * it.prep.total) / total));
+          left -= n;
+          const hue = Coil.hueFor(S, it.index, lay.count);
+          for (const c of Coil.glyphCircles(it.prep, S, { fixedN: Math.max(1, n) })) {
+            out.push({ x: it.tx + c.x * k, y: it.ty + c.y * k, r: c.r * k, a: c.a, hue });
+          }
+        });
+        while (out.length < N) { const l = out[out.length - 1] || { x: W / 2, y: H / 2, r: 0, a: 0, hue: 0 }; out.push({ ...l, r: 0 }); }
+        out.length = N;
+        return out;
+      });
+    }
+
+    morphFrame(S, A) {
+      const sets = this.sets, L = sets.length, N = this.morphN, W = this.W;
+      const cyc = A.hold + A.trans;
+      const T = this.t;
+      const idx = Math.floor(T / cyc);
+      const local = T - idx * cyc;
+      const from = sets[((idx % L) + L) % L], to = sets[(((idx + 1) % L) + L) % L];
+      const p = L < 2 || local < A.hold ? 0 : (local - A.hold) / A.trans;
+      const st = A.stagger, spin = T * A.spin * TAU;
+      const out = new Array(N);
+      for (let i = 0; i < N; i++) {
+        const a = from[i], b = to[i];
+        const e = easeInOut(clamp(p * (1 + st) - st * (i / N), 0, 1));
+        const lift = Math.sin(Math.PI * e);
+        const s = lift * A.swoop * W * 0.12;
+        out[i] = {
+          x: a.x + (b.x - a.x) * e + Math.cos(i * 0.61) * s,
+          y: a.y + (b.y - a.y) * e + Math.sin(i * 0.61) * s,
+          r: (a.r + (b.r - a.r) * e) * (1 + A.pump * lift),
+          a: a.a + wrapAngle(b.a - a.a) * e + spin + lift * Math.PI * A.swoop,
+          hue: a.hue + (b.hue - a.hue) * e,
+        };
+      }
+      return { W, H: this.H, groups: groupByHue(out) };
+    }
+
+    /* ---------- mouse ---------- */
+    buildMouse(S) {
+      const sc = Coil.buildScene(S, this.W, this.H);
+      const all = [];
+      for (const g of sc.groups) for (const c of g.circles) all.push({ ...c, hue: g.hue });
+      const n = all.length;
+      const F = () => new Float32Array(n);
+      this.m = { n, all, dx: F(), dy: F(), vx: F(), vy: F() };
+      this.block = sc.layout.block;
+    }
+
+    pointerTarget(A) {
+      if (this.ptr.inside && this.t - this.ptr.last < 2.5) return this.ptr;
+      if (this.ptr.inside && !A.autopilot) return this.ptr;
+      if (!A.autopilot) return null;
+      const b = this.block, t = this.t;
+      return {
+        x: b.x + b.w / 2 + Math.sin(t * 0.7) * b.w * 0.55 + Math.sin(t * 1.9) * b.w * 0.08,
+        y: b.y + b.h / 2 + Math.sin(t * 1.13 + 1) * b.h * 0.6,
+      };
+    }
+
+    mouseFrame(S, A, dt) {
+      const m = this.m, W = this.W;
+      const P = this.pointerTarget(A);
+      const R = A.reach * W;
+      const K = 8 + 140 * A.spring * A.spring;
+      const damp = Math.exp(-(3 + 7 * A.spring) * dt);
+      const F = A.force * 30000;
+      this.waves = this.waves.filter((w) => this.t - w.t0 < 2.2);
+      const out = new Array(m.n);
+      for (let i = 0; i < m.n; i++) {
+        const c = m.all[i];
+        let dx = m.dx[i], dy = m.dy[i];
+        const px = c.x + dx, py = c.y + dy;
+        let ax = -K * dx, ay = -K * dy, near = 0;
+        if (P) {
+          const ex = px - P.x, ey = py - P.y, d = Math.hypot(ex, ey) + 1e-3;
+          if (d < R) {
+            const f = (1 - d / R) ** 2;
+            near = f;
+            const ux = ex / d, uy = ey / d;
+            if (A.effect === 'repel') { ax += ux * f * F; ay += uy * f * F; }
+            else if (A.effect === 'attract') { ax -= ux * f * F * 0.5; ay -= uy * f * F * 0.5; }
+            else { ax += (-uy + ux * 0.25) * f * F; ay += (ux + uy * 0.25) * f * F; }
+          }
+        }
+        for (const w of this.waves) {
+          const age = this.t - w.t0, front = age * W * 0.9;
+          const ex = px - w.x, ey = py - w.y, d = Math.hypot(ex, ey) + 1e-3;
+          const band = W * 0.06, q = 1 - Math.abs(d - front) / band;
+          if (q > 0) { const f = q * 60000 * Math.exp(-age * 1.6); ax += (ex / d) * f; ay += (ey / d) * f; }
+        }
+        let vx = (m.vx[i] + ax * dt) * damp, vy = (m.vy[i] + ay * dt) * damp;
+        dx += vx * dt; dy += vy * dt;
+        m.vx[i] = vx; m.vy[i] = vy; m.dx[i] = dx; m.dy[i] = dy;
+        const disp = Math.hypot(dx, dy);
+        out[i] = {
+          x: c.x + dx, y: c.y + dy,
+          r: c.r * (1 + A.bulge * near),
+          a: c.a + (disp / Math.max(4, c.r)) * 0.9,
+          hue: c.hue,
+        };
+      }
+      return { W, H: this.H, groups: groupByHue(out) };
+    }
+
+    /* ---------- bounce ---------- */
+    bounceFrame(S, A) {
+      const H = this.H, t = this.t, count = this.lay.count;
+      const groups = this.glyphs.map((g, i) => {
+        const tau = t * A.bounceSpeed - i * A.bounceStagger;
+        const ph = tau - Math.floor(tau);
+        const h = Math.sin(Math.PI * ph);
+        const contact = 1 - h;
+        const sq = A.squash * contact ** 8;
+        const sy = 1 - 0.34 * sq + A.squash * 0.1 * h * Math.cos(Math.PI * ph);
+        const sx = 1 + 0.26 * sq;
+        const rot = A.wobble * 0.32 * Math.sin(TAU * tau * 0.5 + i * 1.7);
+        const intro = clamp((t - i * 0.07) / 0.95, 0, 1);
+        const yOff = -A.height * H * 0.22 * h - (1 - easeOutBounce(intro)) * H * 1.05;
+        const co = Math.cos(rot), si = Math.sin(rot), rs = Math.sqrt(Math.max(0.05, sx * sy));
+        const circles = g.base.map((c) => {
+          const lx = (c.x - g.cx) * sx, ly = (c.y - g.cy) * sy;
+          return { x: g.cx + lx * co - ly * si, y: g.cy + lx * si + ly * co + yOff, r: c.r * rs, a: c.a + rot, si: c.si, k: c.k, n: c.n };
+        });
+        return { circles, ops: Coil.withSeams(circles, S), hue: Coil.hueFor(S, g.it.index, count, t * A.bounceHue + i * 0) };
+      });
+      return { W: this.W, H, groups };
+    }
+
+    /* ---------- recording ---------- */
+    async record(seconds, onProgress) {
+      const types = ['video/mp4;codecs=avc1.640028', 'video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+      const type = typeof MediaRecorder !== 'undefined' && types.find((t) => MediaRecorder.isTypeSupported(t));
+      if (!type || !this.canvas.captureStream) throw Object.assign(new Error('Video recording is not supported in this browser.'), { code: 'unsupported' });
+      this.recording = true;
+      this.restart();
+      this.playing = true;
+      this.step(0);
+      const stream = this.canvas.captureStream(60);
+      const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 16000000 });
+      const chunks = [];
+      rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+      const stopped = new Promise((res) => (rec.onstop = res));
+      rec.start(250);
+      const t0 = performance.now();
+      try {
+        await new Promise((res) => {
+          const tick = () => {
+            const p = (performance.now() - t0) / 1000 / seconds;
+            onProgress && onProgress(Math.min(1, p));
+            if (p >= 1) res(); else setTimeout(tick, 100);
+          };
+          tick();
+        });
+      } finally {
+        rec.stop();
+        await stopped;
+        stream.getTracks().forEach((tr) => tr.stop());
+        this.recording = false;
+        this.dirty = true;
+      }
+      return { blob: new Blob(chunks, { type: type.split(';')[0] }), ext: type.startsWith('video/mp4') ? 'mp4' : 'webm' };
+    }
+  }
+
+  /* Settings saved by any version, made safe for the four modes above. */
+  Coil.normalizeAnim = function (a) {
+    const D = Coil.ANIM_DEFAULTS;
+    const out = { ...D };
+    if (!a || typeof a !== 'object') return out;
+    if (a.v === 2) {
+      // Saved by the timeline version: keep the closest mode and the general settings.
+      const loops = Array.isArray(a.loops) ? a.loops : [];
+      out.mode = a.transition === 'morph' && a.seq !== 'all' ? 'morph'
+        : loops.includes('push') ? 'mouse'
+        : loops.includes('bounce') ? 'bounce' : 'slinky';
+      if (out.mode === 'morph') out.morphBy = a.seq === 'lines' ? 'line' : 'letter';
+      if (typeof a.speed === 'number') out.speed = a.speed;
+      if (typeof a.liveGrain === 'boolean') out.liveGrain = a.liveGrain;
+      return out;
+    }
+    for (const k of Object.keys(D)) if (k in a && typeof a[k] === typeof D[k]) out[k] = a[k];
+    if (!['slinky', 'morph', 'mouse', 'bounce'].includes(out.mode)) out.mode = 'slinky';
+    return out;
+  };
+
+  Coil.Animator = Animator;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* Coil Type — app: state, controls, preview, exports. */
+(function () {
+  const Coil = window.Coil;
+  const $ = (id) => document.getElementById(id);
+  const STORE = 'coil-type-v1';
+  const app = $('app');
+
+  /* ---------- state ---------- */
+  let S = Coil.normalizeSettings({});
+  let A = Coil.normalizeAnim(null);
+  let view = 'gen';
+  let pngScale = 2;
+  let myPalette = null; // the viewer's own default colours
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE) || 'null');
+    if (saved) {
+      S = Coil.normalizeSettings(saved.S);
+      A = Coil.normalizeAnim(saved.A);
+      if (saved.view === 'anim') view = 'anim';
+      if ([1, 2, 4].includes(saved.pngScale)) pngScale = saved.pngScale;
+      // Keep whatever colours were in use when this version first loads as this viewer's default.
+      if (saved.palette && Array.isArray(saved.palette.stops)) myPalette = Coil.paletteOf(Coil.normalizeSettings(saved.palette));
+      else if (saved.S) myPalette = Coil.paletteOf(S);
+    }
+  } catch (e) { /* storage unavailable: start fresh */ }
+  const freshSettings = () => Coil.normalizeSettings(myPalette ? Coil.paletteOf(Coil.normalizeSettings(myPalette)) : {});
+  try { if (location.hash === '#animate') view = 'anim'; } catch (e) {}
+
+  let saveTimer = 0;
+  function persist() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try { localStorage.setItem(STORE, JSON.stringify({ S, A, view, pngScale, palette: myPalette })); } catch (e) {}
+    }, 250);
+  }
+
+  /* ---------- history ---------- */
+  const hist = { stack: [JSON.stringify(S)], i: 0 };
+  function commit() {
+    const s = JSON.stringify(S);
+    if (hist.stack[hist.i] === s) return;
+    hist.stack = hist.stack.slice(0, hist.i + 1);
+    hist.stack.push(s);
+    if (hist.stack.length > 150) hist.stack.shift();
+    hist.i = hist.stack.length - 1;
+    updateUndo();
+    persist();
+  }
+  function travel(d) {
+    const j = hist.i + d;
+    if (j < 0 || j >= hist.stack.length) return;
+    hist.i = j;
+    S = JSON.parse(hist.stack[j]);
+    stateReplaced();
+  }
+  function updateUndo() {
+    $('undo').disabled = hist.i <= 0;
+    $('redo').disabled = hist.i >= hist.stack.length - 1;
+  }
+
+  /* ---------- toast + saving files ---------- */
+  let toastTimer = 0;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+  const inViewer = !!(window.claude && typeof window.claude.use === 'function');
+  const downloadsReady = inViewer ? window.claude.use('downloads').catch(() => null) : Promise.resolve(null);
+  async function saveFile(name, blob) {
+    const dl = await downloadsReady;
+    if (dl) {
+      try {
+        await dl.save({ filename: name, data: blob });
+        toast(`Saved ${name}`);
+      } catch (e) {
+        const code = e && e.code;
+        if (code === 'declined') toast('Save cancelled');
+        else if (code === 'rate_limited') toast('A save prompt is already open');
+        else if (code === 'too_large') toast('That file is too large here. Try a smaller size.');
+        else toast('Saving files is not available in this view');
+      }
+      return;
+    }
+    if (inViewer) { toast('Saving files is not available in this view'); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    toast(`Saved ${name}`);
+  }
+  const slug = () => 'coil-' + (S.text.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 28) || 'type');
+
+  /* ---------- control schema ---------- */
+  const pct = (v) => Math.round(v * 100) + '%';
+  const deg = (v) => Math.round(v) + '°';
+  const fx = (d, u = '') => (v) => (+v).toFixed(d) + u;
+  const CTL = {
+    textCtls: [
+      { k: 'align', type: 'seg', label: 'Align', opts: [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']] },
+      { k: 'tracking', label: 'Letter spacing', min: -250, max: 500, step: 5, fmt: (v) => Math.round(v) },
+      { k: 'lineHeight', label: 'Line spacing', min: 0.5, max: 1.6, step: 0.01, fmt: fx(2) },
+      { k: 'kernMode', type: 'seg', label: 'Auto kerning', opts: [['none', 'Off'], ['optical', 'Optical']], hint: 'Optical kerning closes up open pairs like AT, AV and LT based on the letter shapes.' },
+      { k: 'kernStrength', label: 'Optical strength', min: 0, max: 1, step: 0.01, fmt: pct, show: () => S.kernMode === 'optical' },
+    ],
+    shapeCtls: [
+      { k: 'weight', label: 'Weight', min: 40, max: 320, step: 1, fmt: (v) => Math.round(v) },
+      { k: 'density', label: 'Circle step', min: 0.04, max: 1.2, step: 0.01, fmt: fx(2), hint: 'Gap between circles, relative to their size.' },
+      { k: 'corners', label: 'Round corners', min: 0, max: 1, step: 0.01, fmt: pct },
+      { k: 'width', label: 'Letter width', min: 0.5, max: 1.8, step: 0.01, fmt: fx(2, '×') },
+      { k: 'slant', label: 'Slant', min: -0.4, max: 0.4, step: 0.01, fmt: (v) => Math.round((Math.atan(v) * 180) / Math.PI) + '°' },
+      { k: 'taper', label: 'Taper ends', min: 0, max: 1, step: 0.01, fmt: pct },
+      { k: 'contrast', label: 'Contrast', min: -1, max: 1, step: 0.01, fmt: fx(2), hint: 'Right: heavier verticals. Left: heavier horizontals.' },
+      { k: 'wave', label: 'Wave', min: 0, max: 0.8, step: 0.01, fmt: pct },
+      { k: 'waveFreq', label: 'Waves per stroke unit', min: 0.5, max: 12, step: 0.1, fmt: fx(1), show: () => S.wave > 0 },
+      { k: 'jitter', label: 'Jitter', min: 0, max: 1, step: 0.01, fmt: pct },
+      { k: 'style', type: 'seg', label: 'Circles', opts: [['disc', 'Discs'], ['ring', 'Rings']] },
+      { k: 'ringWidth', label: 'Ring thickness', min: 0.02, max: 0.6, step: 0.01, fmt: pct, show: () => S.style === 'ring' },
+      { k: 'order', type: 'seg', label: 'Stacking', opts: [['forward', 'Along'], ['reverse', 'Reverse'], ['shuffle', 'Shuffle']] },
+    ],
+    colorCtls: [
+      { k: 'gradAngle', label: 'Gradient angle', min: -180, max: 180, step: 1, fmt: deg },
+      { k: 'gradFollow', type: 'switch', label: 'Turn the gradient with the stroke' },
+      { k: 'twist', label: 'Twist', min: -4, max: 4, step: 0.05, fmt: fx(2, ' turns'), hint: 'Spins the gradient along each stroke.' },
+      { k: 'opacity', label: 'Opacity', min: 0.05, max: 1, step: 0.01, fmt: pct },
+      { k: 'blend', type: 'select', label: 'Blend mode', opts: Coil.BLENDS },
+      { k: 'hueDrift', label: 'Hue drift', min: -360, max: 360, step: 1, fmt: deg, hint: 'Shifts the hue from the first letter to the last.' },
+      { k: 'outlineColor', type: 'color', label: 'Ink colour', hint: 'Outline, dot screen and shadow.' },
+      { k: 'outlineWidth', label: 'Outline width', min: 0, max: 0.2, step: 0.005, fmt: pct, show: () => S.style !== 'ring' },
+      { k: 'outlineOpacity', label: 'Outline opacity', min: 0, max: 1, step: 0.01, fmt: pct, show: () => S.style !== 'ring' },
+    ],
+    finishCtls: [
+      { k: 'bg', type: 'color', label: 'Background' },
+      { k: 'transparent', type: 'switch', label: 'Transparent background' },
+      { k: 'grain', label: 'Grain', min: 0, max: 1, step: 0.01, fmt: pct },
+      { k: 'dots', label: 'Dot screen', min: 0, max: 1, step: 0.01, fmt: pct },
+      { k: 'dotSize', label: 'Dot size', min: 0.4, max: 4, step: 0.05, fmt: fx(2), show: () => S.dots > 0 },
+      { k: 'shadow', label: 'Shadow', min: 0, max: 1, step: 0.01, fmt: pct },
+    ],
+    canvasCtls: [
+      { k: 'format', type: 'select', label: 'Format', opts: Object.entries(Coil.FORMATS).map(([k, v]) => [k, v.label]) },
+      { k: 'customW', type: 'number', label: 'Width in px', min: 64, max: 8000, show: () => S.format === 'custom' },
+      { k: 'customH', type: 'number', label: 'Height in px', min: 64, max: 8000, show: () => S.format === 'custom' },
+      { k: 'fill', label: 'Text size', min: 0.2, max: 1, step: 0.01, fmt: pct, hint: 'How much of the canvas the text may fill.' },
+    ],
+  };
+  const MOTION = {
+    slinky: [
+      { k: 'flow', label: 'Flow', min: -8, max: 8, step: 0.1, fmt: fx(1, ' steps/s') },
+      { k: 'spin', label: 'Gradient spin', min: -1, max: 1, step: 0.01, fmt: fx(2, ' turns/s') },
+      { k: 'ripple', label: 'Ripple', min: 0, max: 0.8, step: 0.01, fmt: pct },
+      { k: 'rippleSpeed', label: 'Ripple speed', min: -4, max: 4, step: 0.05, fmt: fx(2) },
+      { k: 'altDir', type: 'switch', label: 'Alternate direction per stroke' },
+      { k: 'hueSpeed', label: 'Colour cycle', min: 0, max: 180, step: 1, fmt: (v) => Math.round(v) + '°/s' },
+    ],
+    morph: [
+      { k: 'morphBy', type: 'seg', label: 'Morph through', opts: [['letter', 'Letters'], ['line', 'Lines']] },
+      { k: 'hold', label: 'Hold', min: 0, max: 3, step: 0.05, fmt: fx(2, ' s') },
+      { k: 'trans', label: 'Transition', min: 0.2, max: 4, step: 0.05, fmt: fx(2, ' s') },
+      { k: 'stagger', label: 'Stagger', min: 0, max: 1.5, step: 0.01, fmt: pct },
+      { k: 'swoop', label: 'Swoop', min: 0, max: 1.5, step: 0.01, fmt: pct },
+      { k: 'pump', label: 'Pump', min: 0, max: 1.5, step: 0.01, fmt: pct },
+      { k: 'spin', label: 'Gradient spin', min: -1, max: 1, step: 0.01, fmt: fx(2, ' turns/s') },
+    ],
+    mouse: [
+      { k: 'effect', type: 'seg', label: 'Cursor', opts: [['repel', 'Repel'], ['attract', 'Attract'], ['swirl', 'Swirl']] },
+      { k: 'reach', label: 'Reach', min: 0.05, max: 0.6, step: 0.01, fmt: pct },
+      { k: 'force', label: 'Force', min: 0, max: 1.5, step: 0.01, fmt: pct },
+      { k: 'bulge', label: 'Bulge', min: 0, max: 2.5, step: 0.01, fmt: pct },
+      { k: 'spring', label: 'Spring', min: 0.1, max: 1, step: 0.01, fmt: pct },
+      { k: 'autopilot', type: 'switch', label: 'Wander when the cursor is away' },
+    ],
+    bounce: [
+      { k: 'height', label: 'Jump height', min: 0, max: 1.5, step: 0.01, fmt: pct },
+      { k: 'bounceSpeed', label: 'Tempo', min: 0.2, max: 3, step: 0.05, fmt: fx(2, ' hops/s') },
+      { k: 'bounceStagger', label: 'Wave delay', min: 0, max: 0.5, step: 0.01, fmt: fx(2) },
+      { k: 'squash', label: 'Squash', min: 0, max: 1, step: 0.01, fmt: pct },
+      { k: 'wobble', label: 'Wobble', min: 0, max: 1.5, step: 0.01, fmt: pct },
+      { k: 'bounceHue', label: 'Colour cycle', min: 0, max: 240, step: 1, fmt: (v) => Math.round(v) + '°/s' },
+    ],
+    common: [
+      { k: 'speed', label: 'Overall speed', min: 0.1, max: 3, step: 0.05, fmt: fx(2, '×') },
+      { k: 'liveGrain', type: 'switch', label: 'Moving grain' },
+    ],
+  };
+  const MODES = [
+    { id: 'slinky', name: 'Slinky', hint: 'Circles crawl along every stroke while the gradient spins.',
+      icon: '<path d="M6 22c0-6 4-12 9-12s9 6 9 12M9 22c0-4 3-9 6-9s6 5 6 9M12 22c0-2 1.5-5 3-5s3 3 3 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' },
+    { id: 'morph', name: 'Morph', hint: 'One shape flows from letter to letter. Pick Lines to morph between the lines of your text.',
+      icon: '<circle cx="9" cy="15" r="5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="17" y="10" width="9" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 8c2-2 4-2 6 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' },
+    { id: 'mouse', name: 'Mouse', hint: 'Move over the canvas to push the circles around. Click for a shockwave.',
+      icon: '<path d="M9 5l12 9-5 1.5 3.5 6-2.5 1.5-3.5-6L9 21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>' },
+    { id: 'bounce', name: 'Bounce', hint: 'Letters hop in a wave, squash when they land and cycle through colours.',
+      icon: '<circle cx="15" cy="9" r="4" fill="currentColor"/><path d="M5 25h20M8 20q3-14 7-11M22 20q-3-14-7-11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' },
+  ];
+
+  const syncers = [];
+  function makeCtl(def, getObj, onChange, defaults, prefix) {
+    const type = def.type || 'range';
+    const wrap = document.createElement('div');
+    wrap.className = 'ctl';
+    const id = 'c-' + (prefix || (getObj === getA ? 'a-' : 's-')) + def.k;
+    const label = document.createElement('label');
+    label.textContent = def.label;
+    let sync;
+    if (type === 'range') {
+      label.htmlFor = id;
+      const out = document.createElement('output');
+      out.htmlFor = id;
+      const inp = document.createElement('input');
+      Object.assign(inp, { type: 'range', id, min: def.min, max: def.max, step: def.step });
+      inp.className = 'full';
+      inp.title = 'Double-click to reset';
+      inp.addEventListener('input', () => { getObj()[def.k] = +inp.value; out.textContent = def.fmt(inp.value); onChange(def.k, false); });
+      inp.addEventListener('change', () => onChange(def.k, true));
+      inp.addEventListener('dblclick', () => { getObj()[def.k] = defaults[def.k]; sync(); onChange(def.k, true); });
+      wrap.append(label, out, inp);
+      sync = () => { inp.value = getObj()[def.k]; out.textContent = def.fmt(getObj()[def.k]); };
+    } else if (type === 'seg') {
+      const seg = document.createElement('div');
+      seg.className = 'seg full';
+      seg.setAttribute('role', 'radiogroup');
+      seg.setAttribute('aria-label', def.label);
+      const btns = def.opts.map(([v, txt]) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.textContent = txt; b.setAttribute('role', 'radio');
+        b.addEventListener('click', () => { getObj()[def.k] = v; sync(); onChange(def.k, true); });
+        seg.appendChild(b);
+        return [v, b];
+      });
+      wrap.append(label, seg);
+      sync = () => btns.forEach(([v, b]) => b.setAttribute('aria-checked', String(getObj()[def.k] === v)));
+    } else if (type === 'switch') {
+      const lab = document.createElement('label');
+      lab.className = 'switch full';
+      const inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.id = id; inp.setAttribute('role', 'switch');
+      const span = document.createElement('span');
+      span.textContent = def.label;
+      lab.append(span, inp);
+      inp.addEventListener('change', () => { getObj()[def.k] = inp.checked; onChange(def.k, true); });
+      wrap.append(lab);
+      sync = () => { inp.checked = !!getObj()[def.k]; };
+    } else if (type === 'select') {
+      label.htmlFor = id;
+      const sel = document.createElement('select');
+      sel.id = id; sel.className = 'full';
+      for (const [v, txt] of def.opts) { const o = document.createElement('option'); o.value = v; o.textContent = txt; sel.appendChild(o); }
+      sel.addEventListener('change', () => { getObj()[def.k] = sel.value; onChange(def.k, true); });
+      wrap.append(label, sel);
+      sync = () => { sel.value = getObj()[def.k]; };
+    } else if (type === 'color') {
+      label.htmlFor = id;
+      const box = document.createElement('div');
+      box.className = 'color-ctl';
+      const col = document.createElement('input');
+      col.type = 'color'; col.id = id;
+      const hex = document.createElement('input');
+      hex.type = 'text'; hex.className = 'hex'; hex.maxLength = 7; hex.spellcheck = false;
+      hex.setAttribute('aria-label', def.label + ' hex');
+      col.addEventListener('input', () => { getObj()[def.k] = col.value; hex.value = col.value; onChange(def.k, false); });
+      col.addEventListener('change', () => onChange(def.k, true));
+      hex.addEventListener('change', () => {
+        let v = hex.value.trim();
+        if (!v.startsWith('#')) v = '#' + v;
+        if (/^#[0-9a-f]{3}$/i.test(v)) v = '#' + v.slice(1).split('').map((c) => c + c).join('');
+        if (/^#[0-9a-f]{6}$/i.test(v)) { getObj()[def.k] = v.toLowerCase(); sync(); onChange(def.k, true); }
+        else { hex.value = getObj()[def.k]; toast('Use a hex colour like #ff3c9e'); }
+      });
+      box.append(col, hex);
+      wrap.append(label, box);
+      sync = () => { col.value = getObj()[def.k]; hex.value = getObj()[def.k]; };
+    } else if (type === 'number') {
+      label.htmlFor = id;
+      const inp = document.createElement('input');
+      Object.assign(inp, { type: 'number', id, min: def.min, max: def.max, step: 1 });
+      inp.style.width = '110px';
+      inp.addEventListener('change', () => {
+        const v = Math.round(Coil.clamp(+inp.value || def.min, def.min, def.max));
+        getObj()[def.k] = v; inp.value = v; onChange(def.k, true);
+      });
+      wrap.append(label, inp);
+      sync = () => { inp.value = getObj()[def.k]; };
+    }
+    if (def.hint) {
+      const p = document.createElement('p');
+      p.className = 'hint full';
+      p.textContent = def.hint;
+      wrap.appendChild(p);
+    }
+    const entry = { wrap, sync, def };
+    syncers.push(entry);
+    return wrap;
+  }
+  const getS = () => S;
+  const getA = () => A;
+
+  function syncAll() {
+    for (const e of syncers) { if (e.wrap.isConnected) e.sync(); }
+    syncVisibility();
+    $('text').value = S.text;
+    renderGrad();
+    textHint();
+    renderPairs();
+  }
+  function syncVisibility() {
+    for (const e of syncers) e.wrap.hidden = e.def.show ? !e.def.show() : false;
+  }
+
+  function onS(key, final) {
+    syncVisibility();
+    styleChanged();
+    if (final) { commit(); renderPairs(); } else persist();
+  }
+  function onA(key, final) {
+    syncVisibility();
+    anim.invalidate();
+    persist();
+  }
+
+  for (const [host, defs] of Object.entries(CTL)) {
+    const el = $(host);
+    for (const d of defs) el.appendChild(makeCtl(d, getS, onS, Coil.DEFAULTS));
+  }
+
+  /* ---------- motion controls ---------- */
+  function buildModes() {
+    const host = $('modes');
+    host.innerHTML = '';
+    for (const m of MODES) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'mode'; b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', String(A.mode === m.id));
+      b.innerHTML = `<svg viewBox="0 0 30 30" aria-hidden="true">${m.icon}</svg><span>${m.name}</span>`;
+      b.addEventListener('click', () => { A.mode = m.id; buildModes(); buildMotionCtls(); anim.restart(); persist(); });
+      host.appendChild(b);
+    }
+    $('modeHint').textContent = MODES.find((m) => m.id === A.mode).hint;
+  }
+  function buildMotionCtls() {
+    const host = $('motionCtls');
+    for (let i = syncers.length - 1; i >= 0; i--) if (host.contains(syncers[i].wrap)) syncers.splice(i, 1);
+    host.innerHTML = '';
+    for (const d of MOTION[A.mode].concat(MOTION.common)) host.appendChild(makeCtl(d, getA, onA, Coil.ANIM_DEFAULTS));
+    for (const e of syncers) if (host.contains(e.wrap)) e.sync();
+    syncVisibility();
+  }
+
+  /* ---------- text ---------- */
+  let textCommit = 0;
+  $('text').addEventListener('input', (e) => {
+    S.text = e.target.value;
+    textHint();
+    renderPairs();
+    styleChanged(true);
+    persist();
+    clearTimeout(textCommit);
+    textCommit = setTimeout(commit, 700);
+  });
+  function textHint() {
+    const bad = [...new Set([...S.text].filter((ch) => ch !== '\n' && Coil.glyphKey(ch) === null))];
+    const h = $('textHint');
+    if (bad.length) {
+      h.textContent = `Not in the set yet, shown as a space: ${bad.join(' ')}`;
+      h.classList.add('warn');
+    } else {
+      h.textContent = 'A–Z, 0–9 and . , : ; ! ? \' " - + = / ( ) * # < > & ♥. Lowercase shows as capitals; accents are dropped.';
+      h.classList.remove('warn');
+    }
+  }
+
+  /* ---------- kerning ---------- */
+  let selPair = null;
+  const minus = (v) => (v < 0 ? '−' + Math.abs(v) : v > 0 ? '+' + v : '0');
+  const showPair = (p) => [...p].join(' ');
+  function renderPairs() {
+    const pairs = Coil.textPairs(S.text);
+    if (selPair && !pairs.includes(selPair)) selPair = null;
+    const host = $('pairs');
+    host.innerHTML = '';
+    if (!pairs.length) {
+      const p = document.createElement('p');
+      p.className = 'hint';
+      p.textContent = 'Type two or more letters next to each other to kern them.';
+      host.appendChild(p);
+    }
+    for (const pair of pairs) {
+      const [a, b] = [...pair];
+      const total = Coil.kernPair(a, b, S);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pair' + (Coil.manualKern(a, b, S) ? ' manual' : '');
+      btn.setAttribute('role', 'option');
+      btn.setAttribute('aria-selected', String(pair === selPair));
+      btn.textContent = showPair(pair);
+      if (total) { const sm = document.createElement('small'); sm.textContent = minus(total); btn.appendChild(sm); }
+      btn.addEventListener('click', () => selectPair(pair === selPair ? null : pair));
+      host.appendChild(btn);
+    }
+    $('kernClear').disabled = !Object.keys(S.kerning).length;
+    renderKernEdit();
+  }
+  function renderKernEdit() {
+    const box = $('kernEdit');
+    box.hidden = !selPair;
+    if (!selPair) return;
+    const [a, b] = [...selPair];
+    const man = Coil.manualKern(a, b, S), opt = Coil.opticalKern(a, b, S);
+    $('kernLabel').textContent = `Adjust ${showPair(selPair)}`;
+    $('kernOut').textContent = minus(man);
+    $('kernRange').value = man;
+    $('kernReset').disabled = !man;
+    $('kernSum').textContent = S.kernMode === 'optical'
+      ? `Optical ${minus(opt)} plus your ${minus(man)} gives ${minus(opt + man)} units.`
+      : `${minus(man)} units, where the letters are 1000 units tall.`;
+  }
+  function selectPair(p) {
+    selPair = p;
+    renderPairs();
+    updateMarks();
+  }
+  let kernCommit = 0;
+  function setManual(v, final) {
+    if (!selPair) return;
+    v = Math.round(Coil.clamp(v, -800, 800));
+    if (v) S.kerning[selPair] = v; else delete S.kerning[selPair];
+    renderPairs();
+    styleChanged(true);
+    clearTimeout(kernCommit);
+    if (final) commit(); else { persist(); kernCommit = setTimeout(commit, 500); }
+  }
+  $('kernRange').addEventListener('input', (e) => setManual(+e.target.value, false));
+  $('kernRange').addEventListener('change', (e) => setManual(+e.target.value, true));
+  $('kernRange').addEventListener('dblclick', () => setManual(0, true));
+  $('kernTighter').addEventListener('click', () => setManual(Coil.manualKern(...selPair, S) - 10, true));
+  $('kernLooser').addEventListener('click', () => setManual(Coil.manualKern(...selPair, S) + 10, true));
+  $('kernReset').addEventListener('click', () => setManual(0, true));
+  $('kernClear').addEventListener('click', () => {
+    S.kerning = {};
+    renderPairs();
+    styleChanged(true);
+    commit();
+    toast('Pair adjustments cleared');
+  });
+
+  // Pink markers on the canvas wherever the selected pair occurs.
+  let lastLayout = null;
+  function updateMarks() {
+    const host = $('kernMarks');
+    host.innerHTML = '';
+    if (!selPair || !lastLayout || view !== 'gen') return;
+    const { W, H } = lastLayout;
+    const items = lastLayout.layout.items;
+    for (let i = 1; i < items.length; i++) {
+      const it = items[i];
+      if (it.pair !== selPair) continue;
+      const prev = items[i - 1];
+      const gx = (prev.x1 + it.x0) / 2;
+      const m = document.createElement('div');
+      m.className = 'kern-mark';
+      m.style.left = (gx / W) * 100 + '%';
+      m.style.top = (it.y0 / H) * 100 + '%';
+      m.style.height = ((it.y1 - it.y0) / H) * 100 + '%';
+      const lab = document.createElement('span');
+      lab.textContent = `${showPair(selPair)} ${minus(it.kern)}`;
+      m.appendChild(lab);
+      host.appendChild(m);
+    }
+  }
+  // Clicking between two letters selects that pair.
+  $('view').addEventListener('click', (e) => {
+    if (!lastLayout) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * lastLayout.W;
+    const y = ((e.clientY - rect.top) / rect.height) * lastLayout.H;
+    const items = lastLayout.layout.items;
+    let best = null, bestD = Infinity;
+    for (let i = 1; i < items.length; i++) {
+      const it = items[i], prev = items[i - 1];
+      if (!it.pair || y < it.y0 || y > it.y1) continue;
+      const gx = (prev.x1 + it.x0) / 2;
+      const reach = Math.min(prev.x1 - prev.x0, it.x1 - it.x0) * 0.5;
+      const d = Math.abs(x - gx);
+      if (d < reach && d < bestD) { best = it.pair; bestD = d; }
+    }
+    selectPair(best);
+    if (best) {
+      const kern = $('kern');
+      kern.closest('details').open = true;
+      kern.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+
+  /* ---------- gradient editor ---------- */
+  let sel = 0;
+  const bar = $('gradBar');
+  function colorAt(p) {
+    const st = S.stops.slice().sort((a, b) => a.p - b.p);
+    if (p <= st[0].p) return st[0].c;
+    for (let i = 1; i < st.length; i++) {
+      if (p <= st[i].p) {
+        const a = st[i - 1], b = st[i], u = (p - a.p) / Math.max(1e-6, b.p - a.p);
+        const ca = Coil.hexToRgb(a.c), cb = Coil.hexToRgb(b.c);
+        return Coil.rgbToHex(ca.map((v, j) => v + (cb[j] - v) * u));
+      }
+    }
+    return st[st.length - 1].c;
+  }
+  function paintGrad() {
+    const st = S.stops.slice().sort((a, b) => a.p - b.p);
+    bar.style.background = `linear-gradient(90deg, ${st.map((s) => `${s.c} ${(s.p * 100).toFixed(1)}%`).join(', ')})`;
+    [...bar.children].forEach((b, i) => {
+      const s = S.stops[i];
+      b.style.left = s.p * 100 + '%';
+      b.style.background = s.c;
+      b.setAttribute('aria-pressed', String(i === sel));
+      b.setAttribute('aria-label', `Gradient stop ${i + 1}: ${s.c} at ${Math.round(s.p * 100)}%`);
+    });
+    const s = S.stops[sel];
+    $('stopColor').value = s.c;
+    if (document.activeElement !== $('stopHex')) $('stopHex').value = s.c;
+    $('stopPos').textContent = `at ${Math.round(s.p * 100)}%`;
+    $('stopDel').disabled = S.stops.length <= 2;
+  }
+  function renderGrad() {
+    if (sel >= S.stops.length) sel = S.stops.length - 1;
+    if (bar.children.length !== S.stops.length) {
+      bar.innerHTML = '';
+      S.stops.forEach((s, i) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'grad-stop';
+        b.dataset.i = i;
+        bar.appendChild(b);
+      });
+    }
+    paintGrad();
+  }
+  let drag = null;
+  bar.addEventListener('pointerdown', (e) => {
+    const rect = bar.getBoundingClientRect();
+    const p = Coil.clamp((e.clientX - rect.left) / rect.width, 0, 1);
+    const stop = e.target.closest('.grad-stop');
+    if (stop) {
+      sel = +stop.dataset.i;
+      drag = { id: e.pointerId, moved: false };
+      bar.setPointerCapture(e.pointerId);
+      stop.focus();
+      paintGrad();
+      return;
+    }
+    if (S.stops.length >= 8) { toast('Eight stops is the maximum'); return; }
+    S.stops.push({ c: colorAt(p), p: Math.round(p * 1000) / 1000 });
+    sel = S.stops.length - 1;
+    renderGrad();
+    styleChanged();
+    commit();
+  });
+  bar.addEventListener('pointermove', (e) => {
+    if (!drag || drag.id !== e.pointerId) return;
+    const rect = bar.getBoundingClientRect();
+    S.stops[sel].p = Math.round(Coil.clamp((e.clientX - rect.left) / rect.width, 0, 1) * 1000) / 1000;
+    drag.moved = true;
+    paintGrad();
+    styleChanged();
+  });
+  const endDrag = () => { if (drag) { if (drag.moved) commit(); drag = null; } };
+  bar.addEventListener('pointerup', endDrag);
+  bar.addEventListener('pointercancel', endDrag);
+  bar.addEventListener('keydown', (e) => {
+    const stop = e.target.closest('.grad-stop');
+    if (!stop) return;
+    sel = +stop.dataset.i;
+    const s = S.stops[sel];
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      s.p = Coil.clamp(s.p + (e.key === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 0.1 : 0.01), 0, 1);
+      paintGrad(); styleChanged(); commit(); e.preventDefault();
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      removeStop(); e.preventDefault();
+    }
+  });
+  function removeStop() {
+    if (S.stops.length <= 2) return;
+    S.stops.splice(sel, 1);
+    sel = Math.max(0, sel - 1);
+    renderGrad(); styleChanged(); commit();
+  }
+  $('stopDel').addEventListener('click', removeStop);
+  $('stopFlip').addEventListener('click', () => {
+    S.stops.forEach((s) => (s.p = Math.round((1 - s.p) * 1000) / 1000));
+    renderGrad(); styleChanged(); commit();
+  });
+  $('stopColor').addEventListener('input', (e) => { S.stops[sel].c = e.target.value; paintGrad(); styleChanged(); });
+  $('stopColor').addEventListener('change', commit);
+  $('stopHex').addEventListener('change', (e) => {
+    let v = e.target.value.trim();
+    if (!v.startsWith('#')) v = '#' + v;
+    if (/^#[0-9a-f]{3}$/i.test(v)) v = '#' + v.slice(1).split('').map((c) => c + c).join('');
+    if (/^#[0-9a-f]{6}$/i.test(v)) { S.stops[sel].c = v.toLowerCase(); paintGrad(); styleChanged(); commit(); }
+    else { e.target.value = S.stops[sel].c; toast('Use a hex colour like #ff3c9e'); }
+  });
+
+  /* ---------- presets (shape and finish only; colours stay) ---------- */
+  function applyLook(p) {
+    for (const k of Coil.STYLE_KEYS) {
+      if (k in p.s && !Coil.PRESET_SKIP.has(k)) S[k] = p.s[k];
+    }
+    stateReplaced();
+    commit();
+    toast(`${p.name} look applied`);
+  }
+  const lookCards = [];
+  function buildPresets() {
+    const host = $('presets');
+    for (const p of Coil.PRESETS) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'preset';
+      b.title = `Apply the ${p.name} look`;
+      const c = document.createElement('canvas');
+      c.width = 168; c.height = 168;
+      const span = document.createElement('span');
+      span.textContent = p.name;
+      b.append(c, span);
+      b.addEventListener('click', () => applyLook(p));
+      host.appendChild(b);
+      lookCards.push([c, p]);
+    }
+    renderLooks();
+  }
+  // Previews use the current colours, because applying a preset keeps them.
+  function renderLooks() {
+    for (const [c, p] of lookCards) {
+      const sp = Coil.normalizeSettings({ ...p.s, ...Coil.paletteOf(S), hueDrift: S.hueDrift, text: 'O', format: 'square', fill: 0.8, weight: 190, tracking: 0 });
+      Coil.renderScene(c, Coil.buildScene(sp, 168, 168), sp);
+    }
+  }
+
+  /* ---------- palettes (colours only) ---------- */
+  const palKey = (p) => JSON.stringify([p.stops.slice().sort((a, b) => a.p - b.p).map((x) => [x.c.toLowerCase(), +(+x.p).toFixed(3)]), p.bg.toLowerCase(), p.outlineColor.toLowerCase()]);
+  function renderPalettes() {
+    const host = $('palettes');
+    host.innerHTML = '';
+    const cur = palKey(Coil.paletteOf(S));
+    const list = (myPalette ? [{ id: 'mine', name: 'My colours', p: myPalette }] : []).concat(Coil.PALETTES);
+    for (const pal of list) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'pal-chip';
+      b.setAttribute('aria-pressed', String(palKey(pal.p) === cur));
+      b.title = `Use the ${pal.name} colours`;
+      const sw = document.createElement('span');
+      sw.className = 'pal-sw';
+      const stops = pal.p.stops.slice().sort((a, c) => a.p - c.p);
+      sw.style.background = `linear-gradient(90deg, ${stops.map((x) => `${x.c} ${x.p * 100}%`).join(', ')})`;
+      sw.style.boxShadow = `0 0 0 3px ${pal.p.bg}, 0 0 0 4px ${pal.p.outlineColor}`;
+      const t = document.createElement('span');
+      t.textContent = pal.name;
+      b.append(sw, t);
+      b.addEventListener('click', () => {
+        Object.assign(S, Coil.paletteOf(Coil.normalizeSettings(pal.p)));
+        stateReplaced();
+        commit();
+        toast(`${pal.name} colours`);
+      });
+      host.appendChild(b);
+    }
+  }
+  $('palSave').addEventListener('click', () => {
+    myPalette = Coil.paletteOf(S);
+    persist();
+    renderPalettes();
+    toast('These colours are now your default');
+  });
+
+  function shuffleLook() {
+    const r = Math.random, pick = (a) => a[Math.floor(r() * a.length)];
+    const h = r() * 360;
+    const scheme = pick([[0, 30, 60], [0, 180, 20], [0, 120, 240], [0, 150, 210], [0, -40, 200]]);
+    const n = 3 + Math.floor(r() * 3);
+    const dark = r() < 0.28;
+    const stops = [];
+    for (let i = 0; i < n; i++) {
+      const hue = h + scheme[i % scheme.length] + (r() * 24 - 12);
+      const light = i === n - 1 ? 0.12 + r() * 0.18 : 0.38 + r() * 0.4;
+      stops.push({ c: Coil.rgbToHex(Coil.hslToRgb([hue, 0.55 + r() * 0.45, light])), p: Math.round((i / (n - 1)) * 1000) / 1000 });
+    }
+    if (r() < 0.4) stops.reverse().forEach((s, i) => (s.p = Math.round((i / (n - 1)) * 1000) / 1000));
+    Object.assign(S, {
+      stops,
+      bg: Coil.rgbToHex(Coil.hslToRgb(dark ? [h + 180, 0.35, 0.08] : [h + r() * 60, 0.14 + r() * 0.2, 0.84 + r() * 0.08])),
+      outlineColor: Coil.rgbToHex(Coil.hslToRgb(dark ? [h + 40, 0.6, 0.82] : [h + 200, 0.6, 0.12])),
+      outlineOpacity: +(0.3 + r() * 0.6).toFixed(2),
+      gradAngle: pick([-90, 0, 90, 180, Math.round(r() * 360 - 180)]),
+      twist: pick([0, 0, 0.5, 1, 2, -1, 3]),
+      density: +(0.1 + r() * 0.3).toFixed(2),
+      opacity: +(0.62 + r() * 0.36).toFixed(2),
+      blend: pick(['source-over', 'source-over', 'source-over', 'multiply', 'screen', 'hard-light', 'difference', 'overlay']),
+      hueDrift: pick([0, 0, 0, 60, 120, -90, 240]),
+      seed: Math.floor(r() * 9999),
+    });
+    stateReplaced();
+    commit();
+  }
+
+  /* ---------- preview ---------- */
+  const viewCanvas = $('view');
+  const animCanvas = $('anim');
+  const wrapEl = $('artboardWrap');
+  const board = $('artboard');
+  function fitBoard(W, H) {
+    const cs = getComputedStyle(wrapEl);
+    const aw = wrapEl.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const ah = wrapEl.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const sc = Math.max(0.01, Math.min(aw / W, ah / H));
+    const w = Math.max(40, Math.floor(W * sc)), h = Math.max(40, Math.floor(H * sc));
+    if (board.style.width !== w + 'px') board.style.width = w + 'px';
+    if (board.style.height !== h + 'px') board.style.height = h + 'px';
+    return w;
+  }
+
+  let raf = 0, dirty = true, lastCost = 0, interacting = false, settleTimer = 0;
+  function requestRender() {
+    dirty = true;
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+  function frame() {
+    raf = 0;
+    if (!dirty || view !== 'gen') return;
+    dirty = false;
+    const { W, H } = Coil.docSize(S);
+    const cssW = fitBoard(W, H);
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const pw = Math.round(Math.min(W * 2, cssW * dpr)), ph = Math.round((pw * H) / W);
+    if (viewCanvas.width !== pw || viewCanvas.height !== ph) { viewCanvas.width = pw; viewCanvas.height = ph; }
+    const t0 = performance.now();
+    const scene = Coil.buildScene(S, W, H);
+    const fast = interacting && lastCost > 30;
+    Coil.renderScene(viewCanvas, scene, S, { sprites: fast });
+    if (!fast) lastCost = performance.now() - t0;
+    if (fast) { clearTimeout(settleTimer); settleTimer = setTimeout(() => { interacting = false; requestRender(); }, 200); }
+    const n = scene.groups.reduce((a, g) => a + g.circles.length, 0);
+    $('info').textContent = `${W} × ${H} px · ${scene.groups.length} letters · ${n} circles`;
+    lastLayout = { W, H, layout: scene.layout };
+    updateMarks();
+  }
+
+  let markTimer = 0;
+  function renderMark() {
+    const c = $('mark');
+    const sm = { ...S, text: 'COIL', align: 'center', lineHeight: 1, tracking: Math.min(S.tracking, 80), fill: 0.96, transparent: true, shadow: 0, grain: 0, dots: 0 };
+    Coil.renderScene(c, Coil.buildScene(sm, c.width, c.height), sm);
+  }
+
+  function styleChanged(textOnly) {
+    interacting = true;
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => { interacting = false; requestRender(); }, 200);
+    requestRender();
+    anim.invalidate();
+    if (!textOnly) {
+      clearTimeout(markTimer);
+      markTimer = setTimeout(() => { renderMark(); renderLooks(); renderPalettes(); }, 200);
+    }
+  }
+  function stateReplaced() {
+    syncAll();
+    styleChanged();
+    persist();
+  }
+
+  /* ---------- animation ---------- */
+  const anim = new Coil.Animator({
+    canvas: animCanvas, getS, getA,
+    fit: fitBoard,
+    onInfo: (txt) => { if (view === 'anim') $('info').textContent = txt; },
+  });
+  $('play').addEventListener('click', () => {
+    anim.play(!anim.playing);
+    $('play').textContent = anim.playing ? 'Pause' : 'Play';
+    $('play').setAttribute('aria-pressed', String(anim.playing));
+  });
+  $('restart').addEventListener('click', () => anim.restart());
+
+  function setView(v) {
+    view = v;
+    app.dataset.view = v;
+    $('tab-gen').setAttribute('aria-selected', String(v === 'gen'));
+    $('tab-anim').setAttribute('aria-selected', String(v === 'anim'));
+    viewCanvas.hidden = v !== 'gen';
+    animCanvas.hidden = v !== 'anim';
+    $('transport').hidden = v !== 'anim';
+    try { history.replaceState(null, '', v === 'anim' ? '#animate' : location.pathname + location.search); } catch (e) {}
+    $('panel').scrollTop = 0;
+    updateMarks();
+    if (v === 'anim') { anim.invalidate(); anim.start(); }
+    else { anim.stop(); requestRender(); }
+    persist();
+  }
+  $('tab-gen').addEventListener('click', () => setView('gen'));
+  $('tab-anim').addEventListener('click', () => setView('anim'));
+
+  /* ---------- export ---------- */
+  const pngCtl = makeCtl({ k: 'pngScale', type: 'seg', label: 'PNG size', opts: [[1, '1×'], [2, '2×'], [4, '4×']] }, () => ({ get pngScale() { return pngScale; }, set pngScale(v) { pngScale = v; } }), () => persist(), {});
+  $('pngScaleCtl').appendChild(pngCtl);
+  const recCtl = makeCtl({ k: 'recLen', type: 'seg', label: 'Length', opts: [[4, '4 s'], [6, '6 s'], [10, '10 s'], [15, '15 s']] }, getA, onA, Coil.ANIM_DEFAULTS);
+  $('recLenCtl').appendChild(recCtl);
+
+  function busy(btn, on, label) {
+    if (on) { btn.dataset.label = btn.textContent; btn.textContent = label; btn.disabled = true; }
+    else { btn.textContent = btn.dataset.label; btn.disabled = false; }
+  }
+
+  $('savePng').addEventListener('click', () => {
+    const btn = $('savePng');
+    const { W, H } = Coil.docSize(S);
+    let sc = pngScale;
+    while (sc > 1 && W * sc * H * sc > 64e6) sc /= 2;
+    if (sc !== pngScale) toast(`Saving at ${sc}× to stay under the canvas size limit`);
+    busy(btn, true, 'Rendering…');
+    setTimeout(() => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = Math.round(W * sc); c.height = Math.round(H * sc);
+        Coil.renderScene(c, Coil.buildScene(S, W, H), S);
+        c.toBlob((blob) => {
+          busy(btn, false);
+          if (!blob) { toast('The image was too large to save. Try a smaller size.'); return; }
+          saveFile(`${slug()}${sc > 1 ? '@' + sc + 'x' : ''}.png`, blob);
+        }, 'image/png');
+      } catch (e) { busy(btn, false); toast('The image could not be rendered. Try a smaller size.'); }
+    }, 30);
+  });
+
+  $('saveSvg').addEventListener('click', () => {
+    const { W, H } = Coil.docSize(S);
+    const svg = Coil.toSVG(S, W, H);
+    saveFile(`${slug()}.svg`, new Blob([svg], { type: 'image/svg+xml' }));
+  });
+
+  function makeFont() {
+    const name = $('fontName').value;
+    const f = Coil.buildFont(S, name);
+    return f;
+  }
+  $('saveFont').addEventListener('click', () => {
+    const btn = $('saveFont');
+    busy(btn, true, 'Building…');
+    setTimeout(() => {
+      try {
+        const f = makeFont();
+        saveFile(`${f.family.replace(/\s+/g, '')}-Regular.ttf`, new Blob([f.bytes], { type: 'font/ttf' }));
+      } catch (e) { console.error(e); toast('The font could not be built with these settings'); }
+      busy(btn, false);
+    }, 30);
+  });
+  let fontSeq = 0;
+  async function previewFont() {
+    const btn = $('previewFont');
+    busy(btn, true, 'Building…');
+    try {
+      const f = makeFont();
+      const fam = 'CoilPreview' + ++fontSeq;
+      const face = new FontFace(fam, f.bytes.buffer.slice(0));
+      await face.load();
+      document.fonts.add(face);
+      $('fontPreview').hidden = false;
+      $('specimen').style.fontFamily = `'${fam}', var(--font-ui)`;
+      $('specimen').textContent = $('fontSample').value;
+      $('fontInfo').textContent = `${f.family} · ${f.characters} characters · ${f.kernPairs} kerning pairs · ${f.layerCount} colour layers · ${Math.round(f.bytes.length / 1024)} KB`;
+      btn.dataset.label = 'Rebuild with current settings';
+    } catch (e) {
+      console.error(e);
+      toast('This browser could not load the font preview');
+    }
+    busy(btn, false);
+  }
+  $('previewFont').addEventListener('click', previewFont);
+  $('fontSample').addEventListener('input', (e) => { $('specimen').textContent = e.target.value; });
+
+  $('saveJson').addEventListener('click', () => {
+    const data = JSON.stringify({ app: 'coil-type', version: 1, settings: S, motion: A }, null, 2);
+    saveFile(`${slug()}-settings.json`, new Blob([data], { type: 'application/json' }));
+  });
+  $('loadJson').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const data = JSON.parse(rd.result);
+        const s = data.settings || data;
+        if (typeof s !== 'object' || !('stops' in s || 'weight' in s)) throw new Error('shape');
+        S = Coil.normalizeSettings(s);
+        if (data.motion) A = Coil.normalizeAnim(data.motion);
+        buildModes(); buildMotionCtls();
+        stateReplaced(); commit();
+        toast('Settings loaded');
+      } catch (err) { toast('That file is not a Coil Type settings file'); }
+      e.target.value = '';
+    };
+    rd.readAsText(file);
+  });
+  let resetArmed = 0;
+  $('reset').addEventListener('click', () => {
+    const btn = $('reset');
+    if (!resetArmed) {
+      btn.textContent = 'Click again to reset';
+      resetArmed = setTimeout(() => { resetArmed = 0; btn.textContent = 'Reset all'; }, 2500);
+      return;
+    }
+    clearTimeout(resetArmed); resetArmed = 0; btn.textContent = 'Reset all';
+    S = freshSettings();
+    A = Coil.normalizeAnim(null);
+    buildModes(); buildMotionCtls();
+    stateReplaced(); commit();
+    toast(myPalette ? 'Back to the defaults, with your colours' : 'Back to the defaults');
+  });
+
+  $('record').addEventListener('click', async () => {
+    const btn = $('record');
+    if (anim.recording) return;
+    busy(btn, true, 'Recording…');
+    btn.classList.add('rec');
+    $('recProgress').hidden = false;
+    try {
+      const res = await anim.record(A.recLen, (p) => { $('recBar').style.width = p * 100 + '%'; });
+      await saveFile(`${slug()}-${A.mode}.${res.ext}`, res.blob);
+    } catch (e) {
+      toast(e && e.code === 'unsupported' ? 'This browser cannot record video' : 'Recording stopped unexpectedly');
+    }
+    btn.classList.remove('rec');
+    busy(btn, false);
+    $('recProgress').hidden = true;
+    $('recBar').style.width = '0';
+    $('play').textContent = 'Pause';
+  });
+
+  /* ---------- global ---------- */
+  $('undo').addEventListener('click', () => travel(-1));
+  $('redo').addEventListener('click', () => travel(1));
+  $('shuffle').addEventListener('click', shuffleLook);
+  document.addEventListener('keydown', (e) => {
+    const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.tagName) && e.target.type !== 'range' && e.target.type !== 'checkbox';
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !typing) {
+      e.preventDefault();
+      travel(e.shiftKey ? 1 : -1);
+    } else if (e.key === ' ' && view === 'anim' && !typing && e.target.tagName !== 'BUTTON') {
+      e.preventDefault();
+      $('play').click();
+    } else if (selPair && view === 'gen' && e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !/^(TEXTAREA|INPUT|SELECT)$/.test(e.target.tagName)) {
+      e.preventDefault();
+      setManual(Coil.manualKern(...selPair, S) + (e.key === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 50 : 10), false);
+    } else if (e.key === 'Escape' && selPair) {
+      selectPair(null);
+    }
+  });
+  new ResizeObserver(() => { requestRender(); anim.invalidate(); }).observe(wrapEl);
+
+  /* ---------- boot ---------- */
+  buildModes();
+  buildMotionCtls();
+  syncAll();
+  buildPresets();
+  renderPalettes();
+  updateUndo();
+  renderMark();
+  setView(view);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestRender());
+})();
+
+</script>

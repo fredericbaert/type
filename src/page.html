@@ -1,0 +1,186 @@
+<title>Coil Type</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Martian+Mono:wght@400;500&display=swap">
+<!-- STYLE -->
+
+<div class="app" id="app">
+  <header class="bar">
+    <div class="brand">
+      <canvas id="mark" class="mark" width="160" height="56" aria-hidden="true"></canvas>
+      <span class="brand-name">Coil Type</span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="View">
+      <button class="tab" id="tab-gen" role="tab" aria-selected="true" aria-controls="stage">Generator</button>
+      <button class="tab" id="tab-anim" role="tab" aria-selected="false" aria-controls="stage">Animate</button>
+    </nav>
+    <div class="bar-actions">
+      <button class="btn ghost" id="undo" title="Undo (Ctrl/Cmd+Z)" disabled>Undo</button>
+      <button class="btn ghost" id="redo" title="Redo (Shift+Ctrl/Cmd+Z)" disabled>Redo</button>
+      <button class="btn" id="shuffle" title="Random colours and shape">Shuffle</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="stage" id="stage" aria-label="Preview">
+      <div class="artboard-wrap" id="artboardWrap">
+        <div class="artboard" id="artboard">
+          <canvas id="view" aria-label="Lettering preview. Click between two letters to kern them."></canvas>
+          <div class="kern-marks" id="kernMarks" aria-hidden="true"></div>
+          <canvas id="anim" aria-label="Animated lettering" hidden></canvas>
+        </div>
+      </div>
+      <div class="stage-foot">
+        <span id="info" class="mono"></span>
+        <div class="anim-transport" id="transport" hidden>
+          <button class="btn" id="play" aria-pressed="true">Pause</button>
+          <button class="btn" id="restart" title="Restart the animation">Restart</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel" aria-label="Settings">
+      <details class="sec" data-view="anim" open>
+        <summary>Motion</summary>
+        <div class="sec-body">
+          <div class="modes" id="modes" role="radiogroup" aria-label="Animation mode"></div>
+          <p class="hint" id="modeHint"></p>
+          <div id="motionCtls" class="ctls"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Text</summary>
+        <div class="sec-body">
+          <label class="field-label" for="text">Letters</label>
+          <textarea id="text" rows="3" maxlength="400" spellcheck="false" autocomplete="off"></textarea>
+          <p class="hint" id="textHint">A–Z, 0–9 and . , : ; ! ? ' " - + = / ( ) * # &lt; &gt; &amp; ♥. Lowercase shows as capitals.</p>
+          <div id="textCtls" class="ctls"></div>
+          <div class="kern" id="kern">
+            <div class="kern-head">
+              <span class="field-label">Pair kerning</span>
+              <button class="btn tiny" id="kernClear" title="Remove all your pair adjustments">Clear adjustments</button>
+            </div>
+            <div class="pairs" id="pairs" role="listbox" aria-label="Letter pairs in your text"></div>
+            <div class="kern-edit" id="kernEdit" hidden>
+              <div class="ctl">
+                <label for="kernRange" id="kernLabel"></label>
+                <output for="kernRange" id="kernOut"></output>
+                <input type="range" id="kernRange" class="full" min="-400" max="300" step="5" title="Double-click to reset">
+              </div>
+              <div class="kern-steps">
+                <button class="btn tiny" id="kernTighter" title="Tighter (Alt + ←)">Tighter</button>
+                <button class="btn tiny" id="kernLooser" title="Looser (Alt + →)">Looser</button>
+                <button class="btn tiny ghost" id="kernReset">Reset pair</button>
+              </div>
+              <p class="hint" id="kernSum"></p>
+            </div>
+            <p class="hint">Click between two letters on the canvas or pick a pair. Alt/Option + ← → nudges the selected pair, Shift for bigger steps. A pair’s kerning applies everywhere it appears and is saved into the font.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Looks</summary>
+        <div class="sec-body">
+          <p class="hint">Looks change the shape and finish. Your colours stay as they are.</p>
+          <div class="presets" id="presets"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Shape</summary>
+        <div class="sec-body"><div id="shapeCtls" class="ctls"></div></div>
+      </details>
+
+      <details class="sec" data-view="both" open>
+        <summary>Colour</summary>
+        <div class="sec-body">
+          <div class="pal">
+            <div class="grad-head">
+              <span class="field-label">Palettes</span>
+              <button class="btn tiny" id="palSave" title="Use these colours for new work and for Reset all">Save as my default</button>
+            </div>
+            <div class="pal-grid" id="palettes"></div>
+          </div>
+          <div class="grad" id="grad">
+            <div class="grad-head">
+              <span class="field-label">Gradient</span>
+              <div class="grad-tools">
+                <button class="btn tiny" id="stopFlip" title="Reverse the gradient">Reverse</button>
+                <button class="btn tiny" id="stopDel" title="Remove the selected stop">Remove stop</button>
+              </div>
+            </div>
+            <div class="grad-bar" id="gradBar" title="Click to add a stop, drag stops to move them"></div>
+            <div class="grad-edit">
+              <input type="color" id="stopColor" aria-label="Stop colour">
+              <input type="text" id="stopHex" class="hex" maxlength="7" spellcheck="false" aria-label="Stop colour hex">
+              <span class="mono small" id="stopPos"></span>
+            </div>
+          </div>
+          <div id="colorCtls" class="ctls"></div>
+        </div>
+      </details>
+
+      <details class="sec" data-view="both">
+        <summary>Finish</summary>
+        <div class="sec-body"><div id="finishCtls" class="ctls"></div></div>
+      </details>
+
+      <details class="sec" data-view="both">
+        <summary>Canvas</summary>
+        <div class="sec-body"><div id="canvasCtls" class="ctls"></div></div>
+      </details>
+
+      <details class="sec" data-view="gen" open>
+        <summary>Export</summary>
+        <div class="sec-body">
+          <div class="export-row">
+            <div class="ctl-inline" id="pngScaleCtl"></div>
+            <button class="btn solid" id="savePng">Save PNG</button>
+          </div>
+          <div class="export-row">
+            <span class="hint flush">Vectors with gradients. Dot screen stays in the PNG.</span>
+            <button class="btn solid" id="saveSvg">Save SVG</button>
+          </div>
+          <div class="font-box">
+            <label class="field-label" for="fontName">Font name</label>
+            <div class="export-row">
+              <input type="text" id="fontName" value="Coil" maxlength="28" spellcheck="false">
+              <button class="btn solid" id="saveFont">Save font (.ttf)</button>
+            </div>
+            <p class="hint">Uses the current shape and colours. Colour shows in Chrome, Edge, Firefox, Safari and Adobe apps; other apps draw it as solid shapes. Blend modes, grain and dots stay in images.</p>
+            <button class="btn" id="previewFont">Try the font here</button>
+            <div class="font-preview" id="fontPreview" hidden>
+              <input type="text" id="fontSample" value="TYPE 2026" spellcheck="false" aria-label="Sample text for the font preview">
+              <div class="specimen" id="specimen"></div>
+              <p class="hint mono small" id="fontInfo"></p>
+            </div>
+          </div>
+          <div class="export-row split">
+            <button class="btn" id="saveJson">Save settings</button>
+            <label class="btn" for="loadJson">Load settings</label>
+            <input type="file" id="loadJson" accept=".json,application/json" hidden>
+            <button class="btn ghost" id="reset">Reset all</button>
+          </div>
+        </div>
+      </details>
+
+
+      <details class="sec" data-view="anim" open>
+        <summary>Record</summary>
+        <div class="sec-body">
+          <div class="export-row">
+            <div class="ctl-inline" id="recLenCtl"></div>
+            <button class="btn solid" id="record">Record video</button>
+          </div>
+          <div class="rec-progress" id="recProgress" hidden><div id="recBar"></div></div>
+          <p class="hint">Records at the full canvas size. Saves MP4 where the browser supports it, otherwise WebM.</p>
+        </div>
+      </details>
+    </aside>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<!-- SCRIPTS -->
