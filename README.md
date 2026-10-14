@@ -2,6 +2,8 @@
 
 Lettering generator that builds every letter from a chain of gradient circles.
 
+**Live site:** https://fredericbaert.github.io/type/
+
 - `dist/coil-type-standalone.html`: the whole app in one file. Double-click to open it in a browser.
 - `dist/coil-type.html`: the same app without the html/head wrapper; this is the version published as an artifact.
 - `index.html`: development page that loads the separate files in `src/`.
@@ -22,3 +24,13 @@ After editing anything in `src/`, run:
 
 `tools/test.html` renders one setting full-screen (settings as JSON in the URL hash); `tools/node-load.js` loads the engine in Node for scripted tests.
 To preview `index.html` from a local server: `python3 -m http.server 8765` in this folder.
+
+## Publish an update
+GitHub Pages serves `docs/index.html`. After changing anything in `src/`:
+
+    node tools/build.js
+    git add -A
+    git commit -m "Describe the change"
+    git push
+
+The site updates within a minute or two.
