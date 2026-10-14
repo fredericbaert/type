@@ -695,10 +695,20 @@ input[type="color"]::-moz-color-swatch { border: 0; border-radius: 50%; }
       for (let q = cursor; q <= a.i; q++) { NP.push(P[q]); NF.push(F[q]); }
       const V = P[c.k];
       const n = Math.max(4, Math.ceil((2 * c.d) / STEP));
+      // A corner that points up or down (the bottom of V, the tops of M) is a tip: cutting across it
+      // would cost the letter height, so the curve is drawn through the original vertex instead.
+      // Handles lie along both legs, so the stroke stays smooth; 2/3 is the plain rounded corner.
+      const tip = (a.y - V[1] > 1 && b.y - V[1] > 1) || (V[1] - a.y > 1 && V[1] - b.y > 1);
+      const h = tip ? 4 / 3 : 2 / 3;
+      const p1x = a.x + h * (V[0] - a.x), p1y = a.y + h * (V[1] - a.y);
+      const p2x = b.x + h * (V[0] - b.x), p2y = b.y + h * (V[1] - b.y);
       NP.push([a.x, a.y]); NF.push(0);
       for (let q = 1; q < n; q++) {
         const t = q / n, u = 1 - t;
-        NP.push([u * u * a.x + 2 * u * t * V[0] + t * t * b.x, u * u * a.y + 2 * u * t * V[1] + t * t * b.y]);
+        NP.push([
+          u * u * u * a.x + 3 * u * u * t * p1x + 3 * u * t * t * p2x + t * t * t * b.x,
+          u * u * u * a.y + 3 * u * u * t * p1y + 3 * u * t * t * p2y + t * t * t * b.y,
+        ]);
         NF.push(0);
       }
       NP.push([b.x, b.y]); NF.push(0);
