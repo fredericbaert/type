@@ -13,6 +13,7 @@
     <nav class="tabs" role="tablist" aria-label="View">
       <button class="tab" id="tab-gen" role="tab" aria-selected="true" aria-controls="stage">Generator</button>
       <button class="tab" id="tab-anim" role="tab" aria-selected="false" aria-controls="stage">Animate</button>
+      <button class="tab" id="tab-social" role="tab" aria-selected="false" aria-controls="stage">Social</button>
     </nav>
     <div class="bar-actions">
       <button class="btn ghost" id="undo" title="Undo (Ctrl/Cmd+Z)" disabled>Undo</button>
@@ -30,6 +31,34 @@
           <canvas id="anim" aria-label="Animated lettering" hidden></canvas>
         </div>
       </div>
+      <div class="social-stage" id="socialStage" hidden>
+        <div class="social-tools" role="toolbar" aria-label="Add to the artboard">
+          <button class="tool" data-add="text" title="Add text (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5h14M12 5v14"/></svg><span>Text</span></button>
+          <button class="tool" data-add="image" title="Add images (I). You can also drop or paste them."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg><span>Image</span></button>
+          <button class="tool" data-add="coil" title="Add Coil lettering (L)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="12" r="5"/><circle cx="12" cy="12" r="5"/><circle cx="16" cy="12" r="5"/></svg><span>Lettering</span></button>
+          <button class="tool" data-add="rect" title="Add rectangle (R)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1.5"/></svg><span>Rectangle</span></button>
+          <button class="tool" data-add="ellipse" title="Add ellipse (O)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><ellipse cx="12" cy="12" rx="8" ry="7"/></svg><span>Ellipse</span></button>
+          <span class="tool-sep" aria-hidden="true"></span>
+          <label class="tool tool-select" title="Add an artboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M7 3v18M17 3v18M3 7h18M3 17h18"/></svg>
+            <span>Artboard</span>
+            <select id="sxAddFrame" aria-label="Add an artboard in this size"><option value="">Add artboard…</option></select>
+          </label>
+          <span class="tool-flex"></span>
+          <div class="zoom" role="group" aria-label="Zoom">
+            <button id="sxZoomOut" title="Zoom out (Cmd/Ctrl −)">−</button>
+            <button id="sxZoomVal" title="Zoom to 100%">100%</button>
+            <button id="sxZoomIn" title="Zoom in (Cmd/Ctrl +)">+</button>
+            <button id="sxFit" title="Show all artboards (Cmd/Ctrl 0)">Fit</button>
+          </div>
+        </div>
+        <div class="social-view" id="socialView">
+          <canvas id="socialCanvas" aria-label="Artboards. Click to select, drag to move, double-click text to edit."></canvas>
+          <textarea id="sxEdit" class="sx-edit" spellcheck="false" aria-label="Edit text" hidden></textarea>
+          <div class="drop-hint" id="sxDrop" hidden>Drop images to add them</div>
+        </div>
+        <input type="file" id="sxFile" accept="image/*" multiple hidden>
+      </div>
       <div class="stage-foot">
         <span id="info" class="mono"></span>
         <div class="anim-transport" id="transport" hidden>
@@ -40,6 +69,46 @@
     </section>
 
     <aside class="panel" id="panel" aria-label="Settings">
+      <details class="sec" data-view="social" open>
+        <summary>Selection</summary>
+        <div class="sec-body" id="sxPropsBody"></div>
+      </details>
+
+      <details class="sec" data-view="social" open>
+        <summary>Layers</summary>
+        <div class="sec-body"><div class="layers" id="sxLayers" role="listbox" aria-label="Layers"></div></div>
+      </details>
+
+      <details class="sec" data-view="social" open>
+        <summary>Artboard</summary>
+        <div class="sec-body" id="sxFrameBody"></div>
+      </details>
+
+      <details class="sec" data-view="social" open>
+        <summary>Export</summary>
+        <div class="sec-body">
+          <div class="ctl">
+            <span class="field-label">Format</span>
+            <div class="seg full" id="sxFmt" role="radiogroup" aria-label="Format"><button type="button" role="radio" data-v="png" aria-checked="true">PNG</button><button type="button" role="radio" data-v="jpg" aria-checked="false">JPG</button></div>
+          </div>
+          <div class="ctl">
+            <span class="field-label">Size</span>
+            <div class="seg full" id="sxScale" role="radiogroup" aria-label="Export size"><button type="button" role="radio" data-v="1" aria-checked="false">1×</button><button type="button" role="radio" data-v="2" aria-checked="true">2×</button></div>
+          </div>
+          <div class="export-row split">
+            <button class="btn solid" id="sxExport">Export artboard</button>
+            <button class="btn" id="sxExportAll">Export all</button>
+          </div>
+          <div class="export-row split">
+            <button class="btn" id="sxSave">Save design</button>
+            <label class="btn" for="sxOpen">Open design</label>
+            <input type="file" id="sxOpen" accept=".json,application/json" hidden>
+          </div>
+          <button class="btn ghost" id="sxNew">New design</button>
+          <p class="hint">Your design and images are kept in this browser between visits. Save design makes a file with everything in it, to move it to another computer.</p>
+        </div>
+      </details>
+
       <details class="sec" data-view="anim" open>
         <summary>Motion</summary>
         <div class="sec-body">

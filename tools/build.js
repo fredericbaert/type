@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path');
 const root = path.join(__dirname, '..');
 const src = (f) => fs.readFileSync(path.join(root, 'src', f), 'utf8');
-const SCRIPTS = ['glyphs.js', 'geom.js', 'engine.js', 'svg.js', 'font.js', 'anim.js', 'app.js'];
+const SCRIPTS = ['glyphs.js', 'geom.js', 'engine.js', 'svg.js', 'font.js', 'anim.js', 'social.js', 'app.js'];
 const page = src('page.html');
 
 const dev = page

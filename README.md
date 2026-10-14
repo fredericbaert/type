@@ -15,6 +15,7 @@ Lettering generator that builds every letter from a chain of gradient circles.
 - `svg.js`: SVG export
 - `font.js`: TrueType builder (glyf outlines + COLRv1/CPAL + OpenType-SVG colour tables + kern table)
 - `anim.js`: animation modes (slinky, morph, mouse, bounce) and video recording
+- `social.js`: the Social tab, a small artboard editor for social posts (text, images, lettering, shapes; PNG/JPG export; designs kept in IndexedDB)
 - `app.js`, `page.html`, `style.css`: the interface
 
 ## Rebuild

@@ -16,7 +16,7 @@
     if (saved) {
       S = Coil.normalizeSettings(saved.S);
       A = Coil.normalizeAnim(saved.A);
-      if (saved.view === 'anim') view = 'anim';
+      if (saved.view === 'anim' || saved.view === 'social') view = saved.view;
       if ([1, 2, 4].includes(saved.pngScale)) pngScale = saved.pngScale;
       // Keep whatever colours were in use when this version first loads as this viewer's default.
       if (saved.palette && Array.isArray(saved.palette.stops)) myPalette = Coil.paletteOf(Coil.normalizeSettings(saved.palette));
@@ -24,7 +24,7 @@
     }
   } catch (e) { /* storage unavailable: start fresh */ }
   const freshSettings = () => Coil.normalizeSettings(myPalette ? Coil.paletteOf(Coil.normalizeSettings(myPalette)) : {});
-  try { if (location.hash === '#animate') view = 'anim'; } catch (e) {}
+  try { if (location.hash === '#animate') view = 'anim'; else if (location.hash === '#social') view = 'social'; } catch (e) {}
 
   let saveTimer = 0;
   function persist() {
@@ -54,9 +54,11 @@
     stateReplaced();
   }
   function updateUndo() {
-    $('undo').disabled = hist.i <= 0;
-    $('redo').disabled = hist.i >= hist.stack.length - 1;
+    const sx = view === 'social' && social;
+    $('undo').disabled = sx ? !social.canUndo() : hist.i <= 0;
+    $('redo').disabled = sx ? !social.canRedo() : hist.i >= hist.stack.length - 1;
   }
+
 
   /* ---------- toast + saving files ---------- */
   let toastTimer = 0;
@@ -782,23 +784,38 @@
   });
   $('restart').addEventListener('click', () => anim.restart());
 
+  /* ---------- social posts ---------- */
+  const social = new Coil.Social({
+    getS, saveFile, toast,
+    onHistory: () => updateUndo(),
+    onInfo: (txt) => { if (view === 'social') $('info').textContent = txt; },
+  });
+
   function setView(v) {
+    const was = view;
     view = v;
     app.dataset.view = v;
     $('tab-gen').setAttribute('aria-selected', String(v === 'gen'));
     $('tab-anim').setAttribute('aria-selected', String(v === 'anim'));
+    $('tab-social').setAttribute('aria-selected', String(v === 'social'));
     viewCanvas.hidden = v !== 'gen';
     animCanvas.hidden = v !== 'anim';
+    wrapEl.hidden = v === 'social';
+    $('socialStage').hidden = v !== 'social';
     $('transport').hidden = v !== 'anim';
-    try { history.replaceState(null, '', v === 'anim' ? '#animate' : location.pathname + location.search); } catch (e) {}
+    $('shuffle').hidden = v === 'social';
+    try { history.replaceState(null, '', v === 'anim' ? '#animate' : v === 'social' ? '#social' : location.pathname + location.search); } catch (e) {}
     $('panel').scrollTop = 0;
     updateMarks();
-    if (v === 'anim') { anim.invalidate(); anim.start(); }
-    else { anim.stop(); requestRender(); }
+    if (v === 'anim') { anim.invalidate(); anim.start(); } else anim.stop();
+    if (v === 'social') social.activate(); else if (was === 'social') social.deactivate();
+    if (v === 'gen') requestRender();
+    updateUndo();
     persist();
   }
   $('tab-gen').addEventListener('click', () => setView('gen'));
   $('tab-anim').addEventListener('click', () => setView('anim'));
+  $('tab-social').addEventListener('click', () => setView('social'));
 
   /* ---------- export ---------- */
   const pngCtl = makeCtl({ k: 'pngScale', type: 'seg', label: 'PNG size', opts: [[1, '1×'], [2, '2×'], [4, '4×']] }, () => ({ get pngScale() { return pngScale; }, set pngScale(v) { pngScale = v; } }), () => persist(), {});
@@ -937,14 +954,15 @@
   });
 
   /* ---------- global ---------- */
-  $('undo').addEventListener('click', () => travel(-1));
-  $('redo').addEventListener('click', () => travel(1));
+  $('undo').addEventListener('click', () => (view === 'social' ? social.undo() : travel(-1)));
+  $('redo').addEventListener('click', () => (view === 'social' ? social.redo() : travel(1)));
   $('shuffle').addEventListener('click', shuffleLook);
   document.addEventListener('keydown', (e) => {
     const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.tagName) && e.target.type !== 'range' && e.target.type !== 'checkbox';
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !typing) {
       e.preventDefault();
-      travel(e.shiftKey ? 1 : -1);
+      if (view === 'social') { if (e.shiftKey) social.redo(); else social.undo(); }
+      else travel(e.shiftKey ? 1 : -1);
     } else if (e.key === ' ' && view === 'anim' && !typing && e.target.tagName !== 'BUTTON') {
       e.preventDefault();
       $('play').click();
@@ -956,6 +974,8 @@
     }
   });
   new ResizeObserver(() => { requestRender(); anim.invalidate(); }).observe(wrapEl);
+  new ResizeObserver(() => { if (view === 'social') social.resize(); }).observe($('socialView'));
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => social.themeChanged()); } catch (e) {}
 
   /* ---------- boot ---------- */
   buildModes();
