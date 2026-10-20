@@ -82,7 +82,8 @@
   };
 
   Coil.DEFAULTS = Object.assign(
-    { text: 'COIL\nTYPE', align: 'center', tracking: 30, lineHeight: 1, seed: 7, kernMode: 'none', kernStrength: 0.6, kerning: {} },
+    { text: 'COIL\nTYPE', align: 'center', tracking: 30, lineHeight: 1, seed: 7, kernMode: 'none', kernStrength: 0.6, kerning: {},
+      sizeMode: 'fit', size: 300, valign: 'middle', wordSpacing: 1 },
     POSTER,
     { format: 'poster', customW: 1600, customH: 1200, fill: 0.84 }
   );
@@ -136,6 +137,10 @@
       }
     }
     out.kerning = kern;
+    if (out.sizeMode !== 'fixed') out.sizeMode = 'fit';
+    out.size = clamp(+out.size || 300, 8, 4000);
+    if (!['top', 'middle', 'bottom'].includes(out.valign)) out.valign = 'middle';
+    out.wordSpacing = clamp(+out.wordSpacing || 1, 0.1, 4);
     return out;
   };
 
@@ -238,7 +243,7 @@
       for (const ch of line) {
         const key = Coil.glyphKey(ch);
         if (key === null) res.unsupported.add(ch);
-        if (key === null || key === ' ') { x += Coil.SPACE_WIDTH * ws + S.tracking; prev = null; continue; }
+        if (key === null || key === ' ') { x += Coil.SPACE_WIDTH * ws * S.wordSpacing + S.tracking; prev = null; continue; }
         const prep = Coil.prepGlyph(key, cornerRho(S), ws, S.slant);
         const kern = prev ? Coil.kernPair(prev, key, S) : 0;
         x += kern;
@@ -261,6 +266,11 @@
     if (f === 'custom') return { W: clamp(Math.round(S.customW) || 1600, 64, 8000), H: clamp(Math.round(S.customH) || 1200, 64, 8000) };
     if (f === 'fit') {
       const m = Coil.measure(S);
+      if (S.sizeMode === 'fixed') {
+        // Canvas wraps the text at its fixed size, with an even margin all round.
+        const k = S.size / (1000 + 2 * S.weight), pad = Math.round(S.size * 0.25);
+        return { W: clamp(Math.round(m.blockW * k + 2 * pad), 64, 8000), H: clamp(Math.round(m.blockH * k + 2 * pad), 64, 8000) };
+      }
       const W = 2400, k = (W * S.fill) / m.blockW;
       return { W, H: clamp(Math.round(m.blockH * k + W * (1 - S.fill)), 64, 8000) };
     }
@@ -268,13 +278,28 @@
     return { W: F.w, H: F.h };
   };
 
-  /* Place glyphs in document pixels. Each item gets tx/ty so that docX = tx + skelX*k. */
+  /* Place glyphs in document pixels. Each item gets tx/ty so that docX = tx + skelX*k.
+     Size is either fitted to the canvas (fill) or fixed: S.size is the height of a capital,
+     ink included, in canvas pixels. Callers that pass opt.fill always fit. */
   Coil.layout = function (S, W, H, opt = {}) {
     const m = Coil.measure(S, opt.text);
     const r = S.weight;
+    const fixed = S.sizeMode === 'fixed' && opt.fill === undefined;
     const fill = opt.fill ?? S.fill;
-    const k = Math.min((W * fill) / m.blockW, (H * fill) / m.blockH);
-    const bx = (W - m.blockW * k) / 2, by = (H - m.blockH * k) / 2;
+    const k = fixed ? S.size / (1000 + 2 * r) : Math.min((W * fill) / m.blockW, (H * fill) / m.blockH);
+    const bw = m.blockW * k, bh = m.blockH * k;
+    let bx = (W - bw) / 2, by = (H - bh) / 2;
+    if (fixed) {
+      const mg = Math.round(Math.min(W, H) * 0.06);
+      if (S.align === 'left') bx = mg;
+      else if (S.align === 'right') bx = W - mg - bw;
+      if (S.valign === 'top') by = mg;
+      else if (S.valign === 'bottom') by = H - mg - bh;
+    } else if (S.valign !== 'middle') {
+      // Same margin at the top or bottom as at the sides.
+      const mg = Math.max(0, Math.min((W - bw) / 2, H - bh));
+      by = S.valign === 'top' ? mg : H - mg - bh;
+    }
     const items = [];
     m.lines.forEach((line, li) => {
       const ox = S.align === 'left' ? 0 : S.align === 'right' ? m.blockW - line.w : (m.blockW - line.w) / 2;
@@ -289,6 +314,11 @@
       }
     });
     return { items, k, count: m.count, unsupported: m.unsupported, block: { x: bx, y: by, w: m.blockW * k, h: m.blockH * k }, measure: m };
+  };
+
+  /* Height of a capital, ink included, in canvas pixels, as laid out on a W × H canvas. */
+  Coil.letterHeight = function (S, W, H) {
+    return Coil.layout(S, W, H).k * (1000 + 2 * S.weight);
   };
 
   /* ---------------- circle chains ---------------- */

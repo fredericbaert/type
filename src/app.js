@@ -102,18 +102,23 @@
   const fx = (d, u = '') => (v) => (+v).toFixed(d) + u;
   const CTL = {
     textCtls: [
+      { k: 'sizeMode', type: 'seg', label: 'Size', opts: [['fit', 'Fit to canvas'], ['fixed', 'Fixed size']] },
+      { k: 'fill', label: 'Fill', min: 0.2, max: 1, step: 0.01, fmt: pct, show: () => S.sizeMode === 'fit', hint: 'How much of the canvas the text may fill.' },
+      { k: 'size', label: 'Letter height', min: 20, max: 2000, step: 1, number: true, unit: 'px', show: () => S.sizeMode === 'fixed', hint: 'Height of a capital, from its top to the baseline, in canvas pixels. Text that does not fit runs off the canvas.' },
+      { k: 'weight', label: 'Weight', min: 40, max: 320, step: 1, fmt: (v) => Math.round(v) },
+      { k: 'width', label: 'Letter width', min: 0.5, max: 1.8, step: 0.01, fmt: fx(2, '×') },
+      { k: 'slant', label: 'Slant', min: -0.4, max: 0.4, step: 0.01, fmt: (v) => Math.round((Math.atan(v) * 180) / Math.PI) + '°' },
       { k: 'align', type: 'seg', label: 'Align', opts: [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']] },
+      { k: 'valign', type: 'seg', label: 'Vertical position', opts: [['top', 'Top'], ['middle', 'Middle'], ['bottom', 'Bottom']] },
       { k: 'tracking', label: 'Letter spacing', min: -250, max: 500, step: 5, fmt: (v) => Math.round(v) },
+      { k: 'wordSpacing', label: 'Word spacing', min: 0.2, max: 3, step: 0.05, fmt: pct },
       { k: 'lineHeight', label: 'Line spacing', min: 0.5, max: 1.6, step: 0.01, fmt: fx(2) },
       { k: 'kernMode', type: 'seg', label: 'Auto kerning', opts: [['none', 'Off'], ['optical', 'Optical']], hint: 'Optical kerning closes up open pairs like AT, AV and LT based on the letter shapes.' },
       { k: 'kernStrength', label: 'Optical strength', min: 0, max: 1, step: 0.01, fmt: pct, show: () => S.kernMode === 'optical' },
     ],
     shapeCtls: [
-      { k: 'weight', label: 'Weight', min: 40, max: 320, step: 1, fmt: (v) => Math.round(v) },
       { k: 'density', label: 'Circle step', min: 0.04, max: 1.2, step: 0.01, fmt: fx(2), hint: 'Gap between circles, relative to their size.' },
       { k: 'corners', label: 'Round corners', min: 0, max: 1, step: 0.01, fmt: pct },
-      { k: 'width', label: 'Letter width', min: 0.5, max: 1.8, step: 0.01, fmt: fx(2, '×') },
-      { k: 'slant', label: 'Slant', min: -0.4, max: 0.4, step: 0.01, fmt: (v) => Math.round((Math.atan(v) * 180) / Math.PI) + '°' },
       { k: 'taper', label: 'Taper ends', min: 0, max: 1, step: 0.01, fmt: pct },
       { k: 'contrast', label: 'Contrast', min: -1, max: 1, step: 0.01, fmt: fx(2), hint: 'Right: heavier verticals. Left: heavier horizontals.' },
       { k: 'wave', label: 'Wave', min: 0, max: 0.8, step: 0.01, fmt: pct },
@@ -146,7 +151,6 @@
       { k: 'format', type: 'select', label: 'Format', opts: Object.entries(Coil.FORMATS).map(([k, v]) => [k, v.label]) },
       { k: 'customW', type: 'number', label: 'Width in px', min: 64, max: 8000, show: () => S.format === 'custom' },
       { k: 'customH', type: 'number', label: 'Height in px', min: 64, max: 8000, show: () => S.format === 'custom' },
-      { k: 'fill', label: 'Text size', min: 0.2, max: 1, step: 0.01, fmt: pct, hint: 'How much of the canvas the text may fill.' },
     ],
   };
   const MOTION = {
@@ -208,7 +212,32 @@
     const label = document.createElement('label');
     label.textContent = def.label;
     let sync;
-    if (type === 'range') {
+    if (type === 'range' && def.number) {
+      // Slider plus a number field you can type into; typed values may go past the slider's range.
+      label.htmlFor = id;
+      const box = document.createElement('label');
+      box.className = 'out-num';
+      const num = document.createElement('input');
+      Object.assign(num, { type: 'number', min: 1, step: 1 });
+      num.setAttribute('aria-label', def.label + (def.unit ? ' in ' + def.unit : ''));
+      const unit = document.createElement('span');
+      unit.textContent = def.unit || '';
+      box.append(num, unit);
+      const inp = document.createElement('input');
+      Object.assign(inp, { type: 'range', id, min: def.min, max: def.max, step: def.step });
+      inp.className = 'full';
+      inp.title = 'Double-click to reset';
+      inp.addEventListener('input', () => { getObj()[def.k] = +inp.value; num.value = Math.round(inp.value); onChange(def.k, false); });
+      inp.addEventListener('change', () => onChange(def.k, true));
+      inp.addEventListener('dblclick', () => { getObj()[def.k] = defaults[def.k]; sync(); onChange(def.k, true); });
+      num.addEventListener('change', () => {
+        const v = Math.round(+num.value);
+        if (!(v > 0)) { sync(); return; }
+        getObj()[def.k] = v; inp.value = v; onChange(def.k, true);
+      });
+      wrap.append(label, box, inp);
+      sync = () => { inp.value = getObj()[def.k]; if (document.activeElement !== num) num.value = Math.round(getObj()[def.k]); };
+    } else if (type === 'range') {
       label.htmlFor = id;
       const out = document.createElement('output');
       out.htmlFor = id;
@@ -313,6 +342,11 @@
   }
 
   function onS(key, final) {
+    if (key === 'sizeMode' && S.sizeMode === 'fixed') {
+      const { W, H } = Coil.docSize({ ...S, sizeMode: 'fit' });
+      S.size = Math.round(Coil.letterHeight({ ...S, sizeMode: 'fit' }, W, H));
+      for (const e of syncers) if (e.def.k === 'size' && e.wrap.isConnected) e.sync();
+    }
     syncVisibility();
     styleChanged();
     if (final) { commit(); renderPairs(); } else persist();
@@ -634,7 +668,7 @@
   // Previews use the current colours, because applying a preset keeps them.
   function renderLooks() {
     for (const [c, p] of lookCards) {
-      const sp = Coil.normalizeSettings({ ...p.s, ...Coil.paletteOf(S), hueDrift: S.hueDrift, text: 'O', format: 'square', fill: 0.8, weight: 190, tracking: 0 });
+      const sp = Coil.normalizeSettings({ ...p.s, ...Coil.paletteOf(S), hueDrift: S.hueDrift, text: 'O', format: 'square', fill: 0.8, weight: 190, tracking: 0, sizeMode: 'fit', valign: 'middle' });
       Coil.renderScene(c, Coil.buildScene(sp, 168, 168), sp);
     }
   }
@@ -742,7 +776,8 @@
     if (!fast) lastCost = performance.now() - t0;
     if (fast) { clearTimeout(settleTimer); settleTimer = setTimeout(() => { interacting = false; requestRender(); }, 200); }
     const n = scene.groups.reduce((a, g) => a + g.circles.length, 0);
-    $('info').textContent = `${W} × ${H} px · ${scene.groups.length} letters · ${n} circles`;
+    const capPx = Math.round(scene.layout.k * (1000 + 2 * S.weight));
+    $('info').textContent = `${W} × ${H} px · ${scene.groups.length} letters · ${capPx} px tall · ${n} circles`;
     lastLayout = { W, H, layout: scene.layout };
     updateMarks();
   }
@@ -750,7 +785,7 @@
   let markTimer = 0;
   function renderMark() {
     const c = $('mark');
-    const sm = { ...S, text: 'COIL', align: 'center', lineHeight: 1, tracking: Math.min(S.tracking, 80), fill: 0.96, transparent: true, shadow: 0, grain: 0, dots: 0 };
+    const sm = { ...S, text: 'COIL', align: 'center', valign: 'middle', sizeMode: 'fit', lineHeight: 1, tracking: Math.min(S.tracking, 80), fill: 0.96, transparent: true, shadow: 0, grain: 0, dots: 0 };
     Coil.renderScene(c, Coil.buildScene(sm, c.width, c.height), sm);
   }
 

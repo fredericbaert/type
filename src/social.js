@@ -308,7 +308,7 @@
       const key = [L.rev, L.text, L.align, Math.round(L.w), Math.round(L.h), pw, exporting].join('|');
       const hit = coilCache.get(L.id);
       if (hit && hit.key === key) return hit.c;
-      const s = Coil.normalizeSettings(Object.assign({}, L.settings, { text: L.text, align: L.align }));
+      const s = Coil.normalizeSettings(Object.assign({}, L.settings, { text: L.text, align: L.align, sizeMode: 'fit', valign: 'middle' }));
       const scene = Coil.buildScene(s, L.w, L.h, { fill: 0.98 });
       const c = document.createElement('canvas');
       c.width = pw; c.height = ph;

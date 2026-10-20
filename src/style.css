@@ -118,6 +118,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .ctl > label, .field-label { font-weight: 600; font-size: 12.5px; }
 .ctl > output { font: 400 10.5px var(--font-mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .ctl > .full { grid-column: 1 / -1; }
+.out-num { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); background: var(--paper); border-radius: 6px; padding: 0 6px; }
+.out-num input[type="number"] { width: 58px; border: 0 !important; background: transparent !important; padding: 3px 0 !important; font: 400 11px var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.out-num input:focus { outline: none; }
+.out-num:focus-within { border-color: var(--focus); }
+.out-num span { font: 400 10.5px var(--font-mono); color: var(--ink-2); }
 .ctl[hidden] { display: none; }
 .hint { margin: 0; font-size: 12px; color: var(--ink-2); line-height: 1.4; }
 .hint.flush { flex: 1; min-width: 0; }
